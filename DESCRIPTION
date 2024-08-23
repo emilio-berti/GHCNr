@@ -1,6 +1,6 @@
 Package: GHCNr
 Title: Weather Station Data From GHCN
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9286-011X"))
@@ -10,10 +10,12 @@ Imports:
     tibble,
     dplyr,
     tidyr,
+    tidyselect,
     httr2,
     terra,
     methods,
-    utils
+    utils,
+    rlang
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

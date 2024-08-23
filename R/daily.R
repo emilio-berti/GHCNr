@@ -72,7 +72,7 @@ daily <- function(station_id, start_date, end_date) {
   daily <- daily |> 
     mutate(across("TMAX" : (colnames(daily)[ncol(daily)]), ~as.numeric(.x))) |> 
     rename_with(tolower) |> 
-    mutate(date = as.POSIXct(date))
+    mutate(date = as.POSIXct(.data$date))
 
   class(daily) <- c("daily", class(daily))
 
@@ -93,6 +93,8 @@ daily <- function(station_id, start_date, end_date) {
 #'
 #' @importFrom dplyr mutate group_by tally ungroup select
 #' @importFrom tidyr drop_na pivot_longer pivot_wider
+#' @importFrom tidyselect where
+#' @importFrom rlang .data
 #'
 #' @export
 #' 
@@ -106,18 +108,18 @@ daily_coverage <- function(x) {
   stopifnot(is(x, "daily"))
   coverage <- x |> 
     mutate(
-      year = .years(date),
-      n_years = max(as.numeric(year)) - min(as.numeric(year)) + 2
+      year = .years(.data$date),
+      n_years = max(as.numeric(.data$year)) - min(as.numeric(.data$year)) + 2
     ) |> 
-    pivot_longer(cols = tmax : (colnames(x)[ncol(x)])) |> 
+    pivot_longer(cols = "tmax" : (colnames(x)[ncol(x)])) |> 
     drop_na() |> 
-    group_by(station, name, n_years) |> 
+    group_by(.data$station, .data$name, .data$n_years) |> 
     tally() |> 
     ungroup() |> 
-    mutate(coverage = n / 365 / n_years) |> 
-    select(station, name, coverage) |> 
-    mutate(coverage = ifelse(coverage > 1, 1, coverage)) |> 
-    pivot_wider(names_from = name, values_from = coverage) |> 
+    mutate(coverage = .data$n / 365 / .data$n_years) |> 
+    select("station", "name", "coverage") |> 
+    mutate(coverage = ifelse(.data$coverage > 1, 1, .data$coverage)) |> 
+    pivot_wider(names_from = .data$name, values_from = .data$coverage) |> 
     mutate(across(where(is.numeric), ~replace_na(.x, 0)))
 
   return(coverage)
