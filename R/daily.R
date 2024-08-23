@@ -70,7 +70,7 @@ daily <- function(station_id, start_date, end_date) {
 
   daily <- body |> bind_rows()
   daily <- daily |> 
-    mutate(across(TMAX : (colnames(daily)[ncol(daily)]), ~as.numeric(.x))) |> 
+    mutate(across("TMAX" : (colnames(daily)[ncol(daily)]), ~as.numeric(.x))) |> 
     rename_with(tolower) |> 
     mutate(date = as.POSIXct(date))
 
