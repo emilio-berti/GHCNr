@@ -3,7 +3,7 @@ output: github_document
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-<!-- You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. -->
+<!-- `devtools::build_readme()` -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -14,20 +14,47 @@ knitr::opts_chunk$set(
 )
 ```
 
-# meteostatr
+# GHCNr
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 ```{r}
 library(terra)
-library(meteostatr)
+library(GHCNr)
 
 world <- vect("~/Documents/ne_10m_land.shp")
 roi <- ext(9.5, 15, 41, 45)
 roi <- crop(world, roi)
 s <- stations(roi, show = TRUE)
-d <- daily(unique(s$id)[1:3], "1990-01-01", "2010-12-31")
+s <- s[s$dataType == "TAVG", ]  # only stations with tavg
+
+# foxus on 3 stations only
+points(
+  s[7:9],
+  col = "grey20", bg = c("violet", "tomato2", "gold"),
+  pch = 23, cex = 2
+)
+d <- daily(unique(s$id)[7:9], "1990-01-01", "1990-12-31")
 daily_coverage(d)
-plot(d$date, d$tmax, col = as.factor(d$station))
+with(
+  subset(d, station == unique(d$station)[1]),
+  plot(
+    date,
+    tmax / 10,
+    col = "violet",
+    type = "l",
+    frame = FALSE,
+    xlab = "Date",
+    ylab = "Maximum temperature"
+  )
+)
+with(
+  subset(d, station == unique(d$station)[2]),
+  lines(date, tmax / 10, col = "tomato2")
+)
+with(
+  subset(d, station == unique(d$station)[3]),
+  lines(date, tmax / 10, col = "gold2")
+)
 ```
