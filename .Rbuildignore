@@ -1,3 +1,4 @@
+.github/
 ^GHCNr\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
