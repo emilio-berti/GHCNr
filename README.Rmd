@@ -24,12 +24,13 @@ library(terra)
 library(GHCNr)
 
 world <- vect("~/Documents/ne_10m_land.shp")
+
 roi <- ext(9.5, 15, 41, 45)
 roi <- crop(world, roi)
 s <- stations(roi, show = TRUE)
 s <- s[s$dataType == "TAVG", ]  # only stations with tavg
 
-# foxus on 3 stations only
+# focus on 3 stations only
 points(
   s[7:9],
   col = "grey20", bg = c("violet", "tomato2", "gold"),

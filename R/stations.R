@@ -16,12 +16,19 @@ stations <- function(roi, show = FALSE) {
   stopifnot(is(roi, "SpatVector"))
   if (length(roi) > 1) roi <- aggregate(roi)
 
-  message(" - Downloading stations inventory")
-  inventory <- tempfile()
-  download.file(
-    "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt",
-    inventory
-  )
+  # allows to recycle downloaded file if it was already downloaded
+  # during this R session.
+  if (is.null(getOption("stations_file"))) {
+    message(" - Downloading stations inventory")
+    inventory <- tempfile()
+    download.file(
+      "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt",
+      inventory
+    )
+    options("stations_file" = inventory)
+  } else {
+    inventory <- getOption("stations_file")
+  }
   
   stations <- read.table(
     inventory,
