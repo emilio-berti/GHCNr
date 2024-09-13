@@ -35,16 +35,24 @@ stations <- function(roi, show = FALSE) {
     header = FALSE,
     col.names = c("id", "lat", "lon", "dataType", "start", "end")
   ) |> 
-    as_tibble() |> 
-    vect(crs = "EPSG:4326")  
+    as_tibble()
+  
+  message(' - Filtering stations')
+  # filter by bbox
+  stations <- stations[stations$lon >= xmin(roi), ]
+  stations <- stations[stations$lon <= xmax(roi), ]
+  stations <- stations[stations$lat >= ymin(roi), ]
+  stations <- stations[stations$lat <= ymax(roi), ]
+  stations <- stations |> vect(crs = "EPSG:4326")  
 
   if (crs(stations) != crs(roi)) stations <- project(stations, roi)
-  s <- stations[relate(stations, roi, "within", pairs = FALSE)[, 1], ]
+  # s <- stations[relate(stations, roi, "within", pairs = FALSE)[, 1], ]
+  stations <- mask(stations, roi)
 
   if (show) {
     plot(roi, col = "grey90")
-    points(s, col = "grey20", bg = "dodgerblue", pch = 21, cex = 1.5)    
+    points(stations, col = "grey20", bg = "dodgerblue", pch = 21, cex = 1.5)    
   }
 
-  return(s)
+  return(stations)
 }

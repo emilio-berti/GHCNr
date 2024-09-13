@@ -36,7 +36,7 @@ points(
   col = "grey20", bg = c("violet", "tomato2", "gold"),
   pch = 23, cex = 2
 )
-d <- daily(unique(s$id)[7:9], "1990-01-01", "1990-12-31")
+d <- daily(unique(s$id)[7:9], "1974-01-01", "2023-12-31")
 daily_coverage(d)
 with(
   subset(d, station == unique(d$station)[1]),
