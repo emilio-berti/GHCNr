@@ -86,7 +86,7 @@ daily <- function(station_id, start_date, end_date) {
 #'
 #' @param x POSIXct object.
 .years <- function(x) {
-  year <- strsplit(as.character(x), '-')[[1]][1]
+  year <- sapply(x, \(x) strsplit(as.character(x), '-')[[1]][1])
   return (year)
 }
 
@@ -113,17 +113,15 @@ daily_coverage <- function(x) {
       n_years = length(unique(.data$year))
     ) |> 
     pivot_longer(cols = !matches("date|station|year|n_years")) |> 
-    drop_na() |> 
     group_by(.data$station, .data$name, .data$n_years) |> 
     tally() |> 
     ungroup() |> 
     mutate(coverage = .data$n / 365 / .data$n_years) |> 
     select("station", "name", "coverage") |> 
-    mutate(coverage = ifelse(.data$coverage > 1, 1, .data$coverage)) |> 
+    mutate(coverage = ifelse(.data$coverage > 1, 1, .data$coverage)) |>
     pivot_wider(names_from = "name", values_from = "coverage") |> 
     mutate(across(where(is.numeric), ~replace_na(.x, 0)))
 
   return(coverage)
 }
-
 

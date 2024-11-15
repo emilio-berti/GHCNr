@@ -1,7 +1,7 @@
 #' @title Get Stations for Area
 #' 
 #' @importFrom methods is
-#' @importFrom terra vect plot points aggregate project crs relate
+#' @importFrom terra vect plot points aggregate project crs relate xmin xmax ymin ymax
 #' @importFrom tibble as_tibble
 #' @importFrom utils read.table download.file
 #' 
