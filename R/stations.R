@@ -19,7 +19,7 @@ stations <- function(roi, show = FALSE) {
   # allows to recycle downloaded file if it was already downloaded
   # during this R session.
   if (is.null(getOption("stations_file"))) {
-    message(" - Downloading stations inventory")
+    message("Downloading stations inventory...")
     inventory <- tempfile()
     download.file(
       "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt",
@@ -37,7 +37,6 @@ stations <- function(roi, show = FALSE) {
   ) |> 
     as_tibble()
   
-  message(' - Filtering stations')
   # filter by bbox
   stations <- stations[stations$lon >= xmin(roi), ]
   stations <- stations[stations$lon <= xmax(roi), ]

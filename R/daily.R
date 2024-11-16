@@ -53,8 +53,8 @@
 #' @export
 #' 
 #' @param station_id Character vector of station id(s).
-#' @param start_date Start date as character.
-#' @param end_date Start date as character.
+#' @param start_date Start date as character (%YYYY-%mm-%dd).
+#' @param end_date Start date as character (%YYYY-%mm-%dd).
 #'
 #' @details dates should be given in `YYYY-mm-dd` format.
 #' 

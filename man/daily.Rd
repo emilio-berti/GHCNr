@@ -9,9 +9,9 @@ daily(station_id, start_date, end_date)
 \arguments{
 \item{station_id}{Character vector of station id(s).}
 
-\item{start_date}{Start date as character.}
+\item{start_date}{Start date as character (\%YYYY-\%mm-\%dd).}
 
-\item{end_date}{Start date as character.}
+\item{end_date}{Start date as character (\%YYYY-\%mm-\%dd).}
 }
 \value{
 A tibble with the stations within the \code{roi}.

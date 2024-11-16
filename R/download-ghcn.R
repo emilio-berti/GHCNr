@@ -1,101 +1,89 @@
-# #' @title Download data from GHCN
-# #'
-# #' @export
-# #' 
-# #' @param station_id Character vector of station id(s).
-# #' @param start_date Start date as character.
-# #' @param end_date Start date as character.
-# #'
-# #' @details dates should be given in `YYYY-mm-dd` format.
-# #' 
-# #' @return A tibble with the stations within the `roi`.
-# get_ghcn <- function(
-#   station_id = NULL,
-#   roi = NULL,
-#   variable,
-#   start_date,
-#   end_date
-# ) {
-#   if (all(is.null(station_id)) && is.null(roi)) {
-#     stop("Provide either a station_id or a roi.")
-#   }
-# s <- stations(roi, show = FALSE)
-# s <- s[s$dataType == "TMAX", ]
-# s <- mask(s, germany)
+#' @title Download data from GHCN
+#'
+#' @importFrom dplyr select mutate left_join all_of
+#' @importFrom tibble as_tibble
+#' @importFrom terra mask geom
+#'
+#' @export
+#' 
+#' @param country_code 3 letter ISO-3 country code.
+#' @param variable either TMAX, TMIN, or TAVG.
+#' @param start_date Start date as character (%YYYY-%mm-%dd).
+#' @param end_date Start date as character (%YYYY-%mm-%dd).
+#'
+#' @details 
+#' Dates should be given in `YYYY-mm-dd` format.
+#' A list of ISO-3 for Europe is in GHCNr::europe_codes.
+#' 
+#' @return A tibble with the stations within the `roi`.
+get_daily_weather <- function(
+  country_code,
+  variable,
+  start_date,
+  end_date
+) {
+	roi <- get_country(country_code)
+  s <- stations(roi)
+	s <- s[s$dataType == variable, ]
+	s <- mask(s, roi)
 
-# plot(germany)
-# points(s[1:5])
-# d <- daily(s$id[1:10], "1979-01-01", "2023-12-31")
-# daily_coverage(d)
-
-
-
-# d <- d |>
-#   left_join(
-#     geom(s) |> as_tibble() |> select(x, y) |> mutate(station = s$id)
-#   ) |>
-#   mutate(longitude = x, latitude = y) |>
-#   select(-x, -y)
-
-
-
-# with(
-#   subset(d, station == unique(d$station)[2]),
-#   plot(
-#     date,
-#     tmax / 10,
-#     col = "violet",
-#     type = "l",
-#     frame = FALSE,
-#     xlab = "Date",
-#     ylab = "Maximum temperature"
-#   )
-# )
-# with(
-#   subset(d, station == unique(d$station)[5]),
-#   lines(date, tmax / 10, col = "blue")
-# )
-# with(
-#   subset(d, station == unique(d$station)[4]),
-#   lines(date, tmax / 10, col = "green2")
-# )
-# with(
-#   subset(d, station == unique(d$station)[3]),
-#   lines(date, tmax / 10, col = "gold2")
-# )
-# with(
-#   subset(d, station == unique(d$station)[1]),
-#   lines(date, tmax / 10, col = "tomato2")
-# )
-# ```
-
-# # focus on 3 stations only
-# points(
-#   s[7:9],
-#   col = "grey20", bg = c("violet", "tomato2", "gold"),
-#   pch = 23, cex = 2
-# )
-# d <- daily(unique(s$id)[7:9], "1974-01-01", "2023-12-31")
-# daily_coverage(d)
-# with(
-#   subset(d, station == unique(d$station)[1]),
-#   plot(
-#     date,
-#     tmax / 10,
-#     col = "violet",
-#     type = "l",
-#     frame = FALSE,
-#     xlab = "Date",
-#     ylab = "Maximum temperature"
-#   )
-# )
-# with(
-#   subset(d, station == unique(d$station)[2]),
-#   lines(date, tmax / 10, col = "tomato2")
-# )
-# with(
-#   subset(d, station == unique(d$station)[3]),
-#   lines(date, tmax / 10, col = "gold2")
-# )
-
-# }
+	if (length(s$id) >= 1e2) {
+		chunks <- ceiling(length(s$id) / 1e2)
+		ans <- as.list(rep(NA, chunks))
+		for (i in seq_len(chunks)) {
+			ids <- s$id[seq( (i - 1) * 100 + 1, i * 100)]
+			ans[[i]] <- daily(ids, start_date, end_date) |>
+			  left_join(  # add spatial coordinates
+			    s |> 
+			    	geom() |>
+			    	as_tibble() |>
+			    	select("x", "y") |>
+			    	mutate(station = s$id),
+			    by = "station"
+			  ) |>
+			  mutate(  # flatten date
+			  	longitude = .data$x,
+			  	latitude = .data$y,
+			  	year = as.numeric(format(date, "%Y")),
+				 	month = as.numeric(format(date, "%m")),
+				 	day = as.numeric(format(date, "%d"))
+			  ) |>
+			  select(  # select features
+			  	"date", "year", "month", "day", 
+			  	"station", "longitude", "latitude",
+			  	all_of(tolower(variable))
+			  )
+			}
+			ans <- ans |> bind_rows()
+		} else {
+			ans <- daily(s$id, start_date, end_date) |>
+			  left_join(  # add spatial coordinates
+			    s |> 
+			    	geom() |>
+			    	as_tibble() |>
+			    	select("x", "y") |>
+			    	mutate(station = s$id),
+			    by = "station"
+			  ) |>
+			  mutate(  # flatten date
+			  	longitude = .data$x,
+			  	latitude = .data$y,
+			  	year = as.numeric(format(date, "%Y")),
+				 	month = as.numeric(format(date, "%m")),
+				 	day = as.numeric(format(date, "%d"))
+			  ) |>
+			  select(  # select features
+			  	"date", "year", "month", "day", 
+			  	"station", "longitude", "latitude",
+			  	all_of(tolower(variable))
+			  )
+	}
+	if (sum(!unique(s$id) %in% unique(ans$station)) > 0) {
+		message(
+			"No data found for ",
+			sum(!unique(s$id) %in% unique(ans$station)),
+			" of the ", length(unique(s$id)), " stations available."
+		)
+	}
+	return(ans)
+}
