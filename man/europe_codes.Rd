@@ -3,9 +3,9 @@
 \docType{data}
 \name{europe_codes}
 \alias{europe_codes}
-\title{World Health Organization TB data}
+\title{Countries ISO Codes}
 \format{
-\subsection{\code{countries}}{
+\subsection{\code{europe_codes}}{
 
 A table of 50 x 3 with columns:
 \describe{
@@ -21,7 +21,6 @@ A table of 50 x 3 with columns:
 europe_codes
 }
 \description{
-A subset of data from the World Health Organization Global Tuberculosis
-Report ...
+Countries ISO Codes
 }
 \keyword{datasets}
