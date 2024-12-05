@@ -1,6 +1,6 @@
 Package: GHCNr
 Title: Weather Station Data from GHCN
-Version: 0.0.2
+Version: 0.1.0
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9286-011X"))
