@@ -2,23 +2,24 @@
 % Please edit documentation in R/daily.R
 \name{.daily_request}
 \alias{.daily_request}
-\title{Request to GET daily summaries}
+\title{Create Request URL for Daily Summaries}
 \usage{
 .daily_request(station_id, start_date, end_date)
 }
 \arguments{
-\item{station_id}{Character vector of station id(s).}
+\item{station_id}{Character, station id(s).}
 
-\item{start_date}{Start date as character.}
+\item{start_date}{Character, start date.}
 
-\item{end_date}{Start date as character.}
+\item{end_date}{Character, end date.}
 }
 \value{
-A tibble with the stations within the \code{roi}.
+Character string with the API URL.
 }
 \description{
-Request to GET daily summaries
+Create Request URL for Daily Summaries
 }
 \details{
-dates should be given in \code{YYYY-mm-dd} format.
+\emph{station_id} can be a vector with multiple stations.
+Dates should be given in \code{YYYY-mm-dd} format.
 }

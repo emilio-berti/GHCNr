@@ -3,6 +3,7 @@
 #' @importFrom dplyr select mutate left_join all_of
 #' @importFrom tibble as_tibble
 #' @importFrom terra mask geom
+#' @importFrom rlang .data
 #'
 #' @export
 #' 

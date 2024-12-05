@@ -2,7 +2,7 @@
 % Please edit documentation in R/daily.R
 \name{daily_coverage}
 \alias{daily_coverage}
-\title{Calculate Coverage of daily summaries}
+\title{Calculate Coverage of Daily Summaries}
 \usage{
 daily_coverage(x)
 }
@@ -13,7 +13,7 @@ daily_coverage(x)
 A tibble with the stations within the \code{roi}.
 }
 \description{
-Calculate Coverage of daily summaries
+Calculate Coverage of Daily Summaries
 }
 \details{
 dates should be given in \code{YYYY-mm-dd} format.

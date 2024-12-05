@@ -8,7 +8,7 @@
 #' }
 #' @source <https://www.countrycallingcodes.com/iso-country-codes/europe-codes.php>
 "europe_codes"
- 
+
 #' Weather Stations from GHCN
 #'
 #' @format ## `stations`
@@ -23,5 +23,3 @@
 #' }
 #' @source <https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt>
 "stations"
- 
-

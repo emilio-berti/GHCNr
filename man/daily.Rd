@@ -2,23 +2,24 @@
 % Please edit documentation in R/daily.R
 \name{daily}
 \alias{daily}
-\title{Download daily summaries}
+\title{Download Daily Summaries}
 \usage{
 daily(station_id, start_date, end_date)
 }
 \arguments{
-\item{station_id}{Character vector of station id(s).}
+\item{station_id}{Character, station id(s).}
 
-\item{start_date}{Start date as character (\%YYYY-\%mm-\%dd).}
+\item{start_date}{Character, start date.}
 
-\item{end_date}{Start date as character (\%YYYY-\%mm-\%dd).}
+\item{end_date}{Character, end date.}
 }
 \value{
-A tibble with the stations within the \code{roi}.
+A tibble with the daily timeseries at the stations.
 }
 \description{
-Download daily summaries
+Download Daily Summaries
 }
 \details{
-dates should be given in \code{YYYY-mm-dd} format.
+\emph{station_id} can be a vector with multiple stations.
+Dates should be given in \code{YYYY-mm-dd} format.
 }
