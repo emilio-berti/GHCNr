@@ -155,7 +155,7 @@ daily <- function(
 
     daily_flags_indices <- matrix(
       as.matrix(daily_flags) %in% colnames(.flags()),
-      ncol = 2,
+      ncol = ncol(daily_flags),
       byrow = FALSE
     )
 
@@ -163,9 +163,9 @@ daily <- function(
     if (flagged_records > 0) {
       message(flagged_records, " flagged record(s):")
       table(unlist(.flags()[daily_flags[daily_flags_indices]]))
+      daily_data <- daily_data[rowSums(daily_flags_indices) == 0, ]
     }
 
-    daily_data <- daily_data[rowSums(daily_flags_indices) == 0, ]
   }
 
   daily_data <- daily_data |> 
