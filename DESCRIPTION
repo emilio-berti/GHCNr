@@ -1,10 +1,10 @@
 Package: GHCNr
-Title: Weather Station Data from GHCN
+Title: Download Weather Station Data from GHCN
 Version: 0.1.0
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9286-011X"))
-Description: What the package does (one paragraph).
+Description: Download daily summaries from the GHCNd weather station array.
 License: MIT + file LICENSE
 Imports:
     tibble,
