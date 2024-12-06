@@ -9,6 +9,8 @@
 #' @param station_id Character, station id(s).
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
+#' @param variables Character, vector of the variables to include.
+#' @param remove_flagged Logical, if to remove flagged records.
 #' @param only_complete Logical, if to retain only months with complete records.
 #'
 #' @details
@@ -19,13 +21,27 @@
 #' in leap years, values of coverage > 1 are set to 1.
 #'
 #' @return A tibble with the monthly timeseries at the stations.
-monthly <- function(station_id, start_date, end_date, only_complete = FALSE) {
+monthly <- function(
+  station_id,
+  start_date,
+  end_date,
+  variables = c("tmax", "tmin", "prcp"),
+  remove_flagged = FALSE,
+  only_complete = FALSE
+) {
+
   days_in_month <- tibble(
     month = c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12") ,
     days = c(  31,   28,   31,   30,   31,   30,   31,   31,   30,   31,   30,   31)
   )
 
-  d <- daily(station_id, start_date, end_date) |>
+  d <- daily(
+    station_id,
+    start_date,
+    end_date,
+    variables,
+    remove_flagged = TRUE
+  ) |>
     mutate(
       year = format(date, "%Y"),
       month = format(date, "%m")
@@ -50,6 +66,15 @@ monthly <- function(station_id, start_date, end_date, only_complete = FALSE) {
   if (only_complete) {
     d <- d |> filter(.data$monthly_coverage == 1)
   }
+
+  # add variables to not break summarize
+  if (!all(c("tavg", "tmin", "tmax", "prcp") %in% colnames(d))) {
+    to_add <- setdiff(c("tavg", "tmin", "tmax", "prcp"), colnames(d))
+    for (x in to_add) {
+      d[[x]] <- -9999
+    }
+  }
+
   # group also by coverage to keep it
   ans <- d |>
     group_by(.data$year, .data$month, .data$monthly_coverage) |>
@@ -59,7 +84,8 @@ monthly <- function(station_id, start_date, end_date, only_complete = FALSE) {
       tavg = mean(.data$tavg),
       prcp = sum(.data$prcp),
       .groups = "drop"
-    )
+    ) |>
+    select(-all_of(to_add))
 
   return(ans)
 }

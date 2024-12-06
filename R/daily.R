@@ -1,3 +1,35 @@
+#' @title GHCNd Flags
+#'
+#' @export
+#'
+#' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
+#' @return Table with flags.
+.flags <- function() {
+  ans <- data.frame(
+    "D" = "duplicate flag",
+    "I" = "consistency flag",
+    "K" = "streak flag",
+    "M" = "mega flag",
+    "N" = "naught flag",
+    "R" = "lagged range flag"
+  )
+  return(ans)
+}
+
+#' @title Extract GHCNd Flags
+#'
+#' @export
+#'
+#' @param x Character, vector of the flag as returned by the GHCNd API call.
+#'
+#' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
+#' @return Character of the flag.
+.extract_flag <- function(x) {
+  x <- sapply(x, \(x) ifelse(is.na(x), ",,,", x))
+  x <- sapply(x, \(x) strsplit(x, ",")[[1]][2])
+  return(x)
+}
+
 #' @title Create Request URL for Daily Summaries
 #'
 #' @export
@@ -5,13 +37,21 @@
 #' @param station_id Character, station id(s).
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
+#' @param variables Character, vector of the variables to include.
+#' @param include_flags Logical, if to include flagged records.
 #'
 #' @details
 #' \emph{station_id} can be a vector with multiple stations.
 #' Dates should be given in `YYYY-mm-dd` format.
 #'
 #' @return Character string with the API URL.
-.daily_request <- function(station_id, start_date, end_date) {
+.daily_request <- function(
+  station_id,
+  start_date,
+  end_date,
+  variables,
+  include_flags
+) {
   if (nchar(strsplit(start_date, "-")[[1]][1]) < 4) {
     warning("   date format should be YYYY-MM-DD")
   }
@@ -38,7 +78,10 @@
     "stations=", station_id, "&",
     "startDate=", start_date, "&",
     "endDate=", end_date, "&",
-    "includeAttributes=false&format=json"
+    "units=metric", "&",
+    "dataTypes=", paste(toupper(variables), collapse = ","), "&",
+    "includeAttributes=", ifelse(include_flags, "true", "false"), "&",
+    "format=json"
   )
   return(req)
 }
@@ -47,7 +90,7 @@
 #'
 #' @importFrom dplyr bind_rows mutate rename_with across group_by tally select
 #' @importFrom httr2 request req_perform resp_body_json
-#' @importFrom tidyselect matches
+#' @importFrom tidyselect matches contains everything any_of
 #' @importFrom rlang .data
 #'
 #' @export
@@ -55,30 +98,81 @@
 #' @param station_id Character, station id(s).
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
+#' @param variables Character, vector of the variables to include.
+#' @param remove_flagged Logical, if to remove flagged records.
 #'
 #' @details
 #' \emph{station_id} can be a vector with multiple stations.
 #' Dates should be given in `YYYY-mm-dd` format.
+#' Available \emph{variables} can be found at <https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt>.
 #'
 #' @return A tibble with the daily timeseries at the stations.
-daily <- function(station_id, start_date, end_date) {
-  req <- .daily_request(station_id, start_date, end_date)
+daily <- function(
+  station_id,
+  start_date,
+  end_date,
+  variables = c("tmax", "tmin", "prcp"),
+  remove_flagged = TRUE
+) {
+  stopifnot(is.character(variables))
+  stopifnot(is.logical(remove_flagged))
+
+  req <- .daily_request(
+    station_id,
+    start_date,
+    end_date,
+    variables,
+    include_flags = FALSE
+  )
   daily_data <- request(req)
   daily_data <- req_perform(daily_data)
   body <- resp_body_json(daily_data)
   if (length(body) == 0) {
     stop("No data found")
   }
-
-  daily <- body |>
+  daily_data <- body |> 
     bind_rows() |>
-    mutate(across(!matches("DATE|STATION"), ~as.numeric(.x))) |>
     rename_with(tolower) |>
-    mutate(date = as.POSIXct(.data$date))
+    mutate(date = as.Date(date))
 
-  class(daily) <- c("daily", class(daily))
+  if (remove_flagged) {
+    req_flags <- .daily_request(
+      station_id,
+      start_date,
+      end_date,
+      variables,
+      include_flags = TRUE
+    )
+    flags_data <- request(req_flags)
+    flags_data <- req_perform(flags_data)
+    flags_body <- resp_body_json(flags_data)
 
-  return(daily)
+    daily_flags <- flags_body |> 
+      bind_rows() |>
+      rename_with(tolower) |>
+      select(contains("attributes")) |>
+      mutate(across(everything(), ~.extract_flag(.x)))
+
+    daily_flags_indices <- matrix(
+      as.matrix(daily_flags) %in% colnames(.flags()),
+      ncol = 2,
+      byrow = FALSE
+    )
+
+    flagged_records <- sum(rowSums(daily_flags_indices) == 1)
+    if (flagged_records > 0) {
+      message(flagged_records, " flagged record(s):")
+      table(unlist(.flags()[daily_flags[daily_flags_indices]]))
+    }
+
+    daily_data <- daily_data[rowSums(daily_flags_indices) == 0, ]
+  }
+
+  daily_data <- daily_data |> 
+    select("date", "station", any_of(variables)) |>
+    mutate(across(any_of(variables), ~as.numeric(.x)))
+
+  return(daily_data)
 }
 
 #' @title Calculate Coverage of Daily Summaries

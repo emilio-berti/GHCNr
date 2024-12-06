@@ -4,7 +4,13 @@
 \alias{daily}
 \title{Download Daily Summaries}
 \usage{
-daily(station_id, start_date, end_date)
+daily(
+  station_id,
+  start_date,
+  end_date,
+  variables = c("tmax", "tmin", "prcp"),
+  remove_flagged = TRUE
+)
 }
 \arguments{
 \item{station_id}{Character, station id(s).}
@@ -12,6 +18,10 @@ daily(station_id, start_date, end_date)
 \item{start_date}{Character, start date.}
 
 \item{end_date}{Character, end date.}
+
+\item{variables}{Character, vector of the variables to include.}
+
+\item{remove_flagged}{Logical, if to remove flagged records.}
 }
 \value{
 A tibble with the daily timeseries at the stations.
@@ -22,4 +32,5 @@ Download Daily Summaries
 \details{
 \emph{station_id} can be a vector with multiple stations.
 Dates should be given in \code{YYYY-mm-dd} format.
+Available \emph{variables} can be found at \url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt}.
 }

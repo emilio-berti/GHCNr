@@ -4,7 +4,14 @@
 \alias{monthly}
 \title{Download Monthly Summaries}
 \usage{
-monthly(station_id, start_date, end_date, only_complete = FALSE)
+monthly(
+  station_id,
+  start_date,
+  end_date,
+  variables = c("tmax", "tmin", "prcp"),
+  remove_flagged = FALSE,
+  only_complete = FALSE
+)
 }
 \arguments{
 \item{station_id}{Character, station id(s).}
@@ -12,6 +19,10 @@ monthly(station_id, start_date, end_date, only_complete = FALSE)
 \item{start_date}{Character, start date.}
 
 \item{end_date}{Character, end date.}
+
+\item{variables}{Character, vector of the variables to include.}
+
+\item{remove_flagged}{Logical, if to remove flagged records.}
 
 \item{only_complete}{Logical, if to retain only months with complete records.}
 }
