@@ -139,8 +139,8 @@ daily <- function(
     )
 
   daily_data <- daily_data |> 
-    select("date", "station", any_of(variables), contains("flag")) |>
-    mutate(across(any_of(variables), ~as.numeric(.x)))
+    select("date", "station", any_of(tolower(variables)), contains("flag")) |>
+    mutate(across(any_of(tolower(variables)), ~as.numeric(.x)))
 
   return(daily_data)
   
@@ -187,9 +187,9 @@ remove_flagged <- function(x) {
 
 #' @title Calculate Coverage of Daily Summaries
 #'
-#' @importFrom dplyr mutate group_by tally ungroup select across
+#' @importFrom dplyr mutate group_by tally add_tally ungroup select across distinct_all
 #' @importFrom tidyr drop_na pivot_longer pivot_wider replace_na
-#' @importFrom tidyselect where matches
+#' @importFrom tidyselect where matches any_of
 #' @importFrom rlang .data
 #'
 #' @export
@@ -200,21 +200,42 @@ remove_flagged <- function(x) {
 #'
 #' @return A tibble with the stations within the `roi`.
 daily_coverage <- function(x) {
-  stopifnot(is(x, "daily"))
+  days_in_month <- tibble(
+    month = c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12") ,
+    days = c(  31,   28,   31,   30,   31,   30,   31,   31,   30,   31,   30,   31)
+  )
   coverage <- x |>
+    drop_na() |> 
+    select(-any_of(c("tmin", "tmax", "prcp"))) |> 
     mutate(
       year = format(.data$date, "%Y"),
-      n_years = length(unique(.data$year))
+      month = format(.data$date, "%m"),
+      day = format(.data$date, "%d"),
     ) |>
-    pivot_longer(cols = !matches("date|station|year|n_years")) |>
-    group_by(.data$station, .data$name, .data$n_years) |>
-    tally() |>
-    ungroup() |>
-    mutate(coverage = .data$n / 365 / .data$n_years) |>
-    select("station", "name", "coverage") |>
-    mutate(coverage = ifelse(.data$coverage > 1, 1, .data$coverage)) |>
-    pivot_wider(names_from = "name", values_from = "coverage") |>
-    mutate(across(where(is.numeric), ~replace_na(.x, 0)))
+    group_by(.data$year, .data$month) |> 
+    add_tally() |> 
+    left_join(days_in_month, by = "month") |> 
+    mutate(monthly_coverage = .data$n / .data$days) |> 
+    ungroup() |> 
+    select(-"n") |> 
+    group_by(.data$year) |> 
+    add_tally() |> 
+    mutate(
+      annual_coverage = .data$n / 365,
+      annual_coverage = ifelse(.data$annual_coverage > 1, 1, .data$annual_coverage)  # leap years
+    ) |> 
+    ungroup() |> 
+    select(-"n", -"day", -"days", -"date") |> 
+    distinct_all() |> 
+    mutate(
+      year = as.numeric(year),
+      month = as.numeric(month)
+    ) |> 
+    mutate(
+      n = max(.data$year) - min(.data$year) + 1,
+      year_coverage = length(unique(.data$year)) / .data$n
+    ) |> 
+    select(-"n")
 
   return(coverage)
 }

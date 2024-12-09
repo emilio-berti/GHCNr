@@ -1,0 +1,128 @@
+---
+title: "Daily Weather Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Daily Weather Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(GHCNr)
+library(terra)  # for handling countries geometries
+```
+
+# Select GHCNd stations
+
+The station inventory file of GHCNd is stored at <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>.
+The function `stations()` can read from this source or from a local file, specified with `filename`.
+The inventory can also be downloaded to a file using `download_inventory()`.
+
+```{r download-inventory}
+inventory_file <- download_inventory("~/Downloads/ghcn-inventory.txt")
+stations <- stations(inventory_file, variables = "TMAX")
+stations
+```
+By specifying `variables = "TMAX"` only the stations that recorded that variable are kept.
+Available variables implemented at the moment are precipitation ("PRCP"), minimum temperature ("TMIN"), and maximum temperature ("TMAX").
+
+Stations spanning a time range can be filtered easily.
+```{r filter-by-year}
+stations <- stations[stations$startYear <= 1990, ]
+stations <- stations[stations$endYear >= 2000, ]
+stations
+```
+
+Spatial filters can also be easily applied.
+Spatial boundaries of countries can be downloaded from <https://www.geoboundaries.org/> using the `get_countr(couuntry_code = ...)` function, where `country_code` is the ISO3 code.
+```{r get-country}
+italy <- get_country("ITA")
+```
+`get_countries()` can take several ISO3 codes to return a geometry of multiple countries.
+
+```{r spatial-filter}
+stations <- filter_stations(stations, italy)
+plot(italy)
+points(stations[, c("longitude", "latitude")], pch = 20, col = "dodgerblue")
+```
+
+# Download daily timeseries
+
+Daily timeseries for a station can be downloaded using the `daily()` function.
+In addition to the station ID, `daily()` needs start and end dates of the timeseries.
+These should be provided as strings with the format "YYYY-mm-dd", e.g., "1990-01-01".
+
+```{r daily}
+daily_ts <- daily(
+  stations$station[1],
+  paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
+  paste(stations$endYear[1], "12", "21", sep = "-"),
+  variables = "tmin"
+)
+daily_ts
+```
+
+Implmented variables are "tmin", "tmax", and "prcp".
+`daily()` returns a table with the value of the variable chosen and associated flags.
+Only certain flags from GHCNd are implemented, namely:
+```{r flags, echo=FALSE}
+GHCNr:::.flags()
+```
+
+Flagged records can be removed using `remove_flagged().
+This will also remove the "*_flag=" column.
+```{r remove-flagged}
+daily_ts <- remove_flagged(daily_ts)
+daily_ts
+```
+
+Coverage of the timeseries can be calculated using `daily_coverage()`.
+```{r daily-coverage}
+coverage <- daily_coverage(daily_ts)
+```
+The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`year`).
+`annual_coverage` is constant within the same year and `year` is always a constant.
+
+```{r coverages}
+coverage[coverage$monthly_coverage < 1, ]
+with(coverage[coverage$month == 1, ],
+  barplot(
+    annual_coverage,
+    names.arg = year,
+    las = 2
+  )
+)
+```
+
+Note that missing years are not shown and that `year_coverage` only calculates the number of years that have been covered, not their internal coverage.
+
+```{r plot-timeseries, echo=FALSE, fig.width=6, fig.height = 4}
+daily_ts$year <- as.numeric(format(daily_ts$date, "%Y"))
+daily_ts$day <- as.numeric(format(daily_ts$date, "%j"))
+palette <- hcl.colors(
+  diff(range(unique(daily_ts$year))) + 1,
+  "Zissou 1"
+)
+plot(
+  c(1, 365), range(daily_ts$tmin, na.rm = TRUE),
+  pch = NA, xlab = "Day of the year", ylab = "Tmin"
+)
+for (y in unique(daily_ts$year)) {
+  with(
+    daily_ts[daily_ts$year == y, ],
+    lines(day, tmin, col = palette[as.numeric(y) - 1989], lw = 1.2)
+  )
+}
+legend(
+  x = 0, y = 20,
+  legend = unique(daily_ts$year)[seq(1, 35, 5)],
+  fill = palette[seq(1, 35, 5)]
+)
+```

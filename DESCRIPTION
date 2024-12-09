@@ -1,6 +1,6 @@
 Package: GHCNr
 Title: Download Weather Station Data from GHCN
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9286-011X"))
@@ -10,6 +10,7 @@ Imports:
     tibble,
     dplyr,
     tidyr,
+    readr,
     tidyselect,
     httr2,
     terra,
@@ -17,6 +18,8 @@ Imports:
     utils,
     rlang
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
@@ -25,3 +28,4 @@ RoxygenNote: 7.3.2
 Depends: 
     R (>= 2.10)
 LazyData: true
+VignetteBuilder: knitr

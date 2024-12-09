@@ -4,7 +4,7 @@
 \alias{.daily_request}
 \title{Create Request URL for Daily Summaries}
 \usage{
-.daily_request(station_id, start_date, end_date, variables, include_flags)
+.daily_request(station_id, start_date, end_date, variables)
 }
 \arguments{
 \item{station_id}{Character, station id(s).}
@@ -14,8 +14,6 @@
 \item{end_date}{Character, end date.}
 
 \item{variables}{Character, vector of the variables to include.}
-
-\item{include_flags}{Logical, if to include flagged records.}
 }
 \value{
 Character string with the API URL.

@@ -4,13 +4,7 @@
 \alias{daily}
 \title{Download Daily Summaries}
 \usage{
-daily(
-  station_id,
-  start_date,
-  end_date,
-  variables = c("tmax", "tmin", "prcp"),
-  remove_flagged = TRUE
-)
+daily(station_id, start_date, end_date, variables = c("tmax", "tmin", "prcp"))
 }
 \arguments{
 \item{station_id}{Character, station id(s).}
@@ -20,8 +14,6 @@ daily(
 \item{end_date}{Character, end date.}
 
 \item{variables}{Character, vector of the variables to include.}
-
-\item{remove_flagged}{Logical, if to remove flagged records.}
 }
 \value{
 A tibble with the daily timeseries at the stations.
