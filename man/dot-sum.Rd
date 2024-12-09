@@ -6,6 +6,9 @@
 \usage{
 .sum(x)
 }
+\arguments{
+\item{x}{Numeric vector}
+}
 \value{
 Numeric.
 }

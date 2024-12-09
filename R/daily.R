@@ -110,6 +110,8 @@ daily <- function(
     select("date", "station", any_of(tolower(variables)), contains("flag")) |>
     mutate(across(any_of(tolower(variables)), ~as.numeric(.x)))
 
+  ans <- .s3_daily(ans)
+
   return(ans)
   
 }
@@ -129,6 +131,8 @@ daily <- function(
 #'
 #' @return A tibble with the stations within the `roi`.
 remove_flagged <- function(x) {
+  stopifnot(inherits(x, "ghcn-daily"))
+
   flagged <- matrix(
     as.matrix(x |> select(contains("flag"))) %in% colnames(.flags()),
     ncol = ncol(x |> select(contains("flag"))),

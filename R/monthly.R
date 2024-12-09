@@ -16,6 +16,7 @@
 #'
 #' @return A tibble with the monthly timeseries at the stations.
 monthly <- function(x) {
+  stopifnot(inherits(x, "ghcn-daily"))
 
   if (any(grepl("flag", colnames(x)))) {
     flags <- x |> 
@@ -36,8 +37,8 @@ monthly <- function(x) {
 
   ans <- x |>
     mutate(
-      year = format(date, "%Y"),
-      month = format(date, "%m")
+      year = format(.data$date, "%Y"),
+      month = format(.data$date, "%m")
     ) |> 
     group_by(.data$station, .data$year, .data$month) |>
     summarize(
@@ -49,8 +50,8 @@ monthly <- function(x) {
     ) |>
     select(-all_of(missing_variable)) |> 
     mutate(
-      year = as.numeric(year),
-      month = as.numeric(month)
+      year = as.numeric(.data$year),
+      month = as.numeric(.data$month)
     )
   
   ans <- ans |> 
@@ -58,6 +59,8 @@ monthly <- function(x) {
       coverage(x) |> select("station", "monthly_coverage", "year", "month"),
       by = c("station", "year", "month")
     )
+
+  ans <- .s3_monthly(ans)
 
   return(ans)
 }

@@ -6,6 +6,9 @@
 \usage{
 .mean(x)
 }
+\arguments{
+\item{x}{Numeric vector}
+}
 \value{
 Numeric.
 }

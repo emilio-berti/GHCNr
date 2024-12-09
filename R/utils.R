@@ -63,6 +63,8 @@
 #'
 #' @return A tibble with the stations within the `roi`.
 coverage <- function(x) {
+  stopifnot(inherits(x, "ghcn-daily"))
+
   coverage <- x |> 
     drop_na() |> 
     select(-any_of(c("tmin", "tmax", "prcp"))) |> 
@@ -101,6 +103,7 @@ coverage <- function(x) {
 
 #' @title Calculate Minimum
 #' @export
+#' @param x Numeric vector
 #' @return Numeric.
 .min <- function(x) {
     x <- x[!is.na(x)]
@@ -109,6 +112,7 @@ coverage <- function(x) {
 }
 #' @title Calculate Maximum
 #' @export
+#' @param x Numeric vector
 #' @return Numeric.
 .max <- function(x) {
     x <- x[!is.na(x)]
@@ -117,6 +121,7 @@ coverage <- function(x) {
 }
 #' @title Calculate Mean
 #' @export
+#' @param x Numeric vector
 #' @return Numeric.
 .mean <- function(x) {
     x <- x[!is.na(x)]
@@ -125,6 +130,7 @@ coverage <- function(x) {
 }
 #' @title Calculate Sum
 #' @export
+#' @param x Numeric vector
 #' @return Numeric.
 .sum <- function(x) {
     x <- x[!is.na(x)]

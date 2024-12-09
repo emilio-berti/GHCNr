@@ -1,6 +1,5 @@
 #' @title Calculate Annual Summaries
 #'
-#' @importFrom methods is
 #' @importFrom dplyr select mutate across distinct_all summarize group_by left_join
 #' @importFrom tidyselect contains everything all_of
 #' @importFrom tidyr drop_na
@@ -17,6 +16,7 @@
 #'
 #' @return A tibble with the annual timeseries at the stations.
 annual <- function(x) {
+  stopifnot(inherits(x, "ghcn-daily"))
 
   if (any(grepl("flag", colnames(x)))) {
     flags <- x |> 
@@ -36,7 +36,7 @@ annual <- function(x) {
   }
 
   ans <- x |>
-    mutate(year = format(date, "%Y")) |> 
+    mutate(year = format(.data$date, "%Y")) |> 
     group_by(.data$station, .data$year) |>
     summarize(
       tmin = .min(.data$tmin),
@@ -46,7 +46,7 @@ annual <- function(x) {
       .groups = "drop"
     ) |>
     select(-all_of(missing_variable)) |> 
-    mutate(year = as.numeric(year))
+    mutate(year = as.numeric(.data$year))
   
   ans <- ans |> 
     left_join(
@@ -55,6 +55,8 @@ annual <- function(x) {
         distinct_all(),
       by = c("station", "year")
     )
+
+  ans <- .s3_annual(ans)
   
   return(ans)
 }
