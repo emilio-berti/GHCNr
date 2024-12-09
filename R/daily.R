@@ -228,8 +228,8 @@ daily_coverage <- function(x) {
     select(-"n", -"day", -"days", -"date") |> 
     distinct_all() |> 
     mutate(
-      year = as.numeric(year),
-      month = as.numeric(month)
+      year = as.numeric(.data$year),
+      month = as.numeric(.data$month)
     ) |> 
     mutate(
       n = max(.data$year) - min(.data$year) + 1,

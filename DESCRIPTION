@@ -14,7 +14,6 @@ Imports:
     tidyselect,
     httr2,
     terra,
-    methods,
     utils,
     rlang
 Suggests: 

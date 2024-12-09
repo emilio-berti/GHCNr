@@ -40,12 +40,14 @@ stations <- function(filename, variables = c("tmin", "tmax", "prcp")) {
     col_names = c("station", "latitude", "longitude", "variable", "startYear", "endYear"),
     show_col_types = FALSE
   ) |> 
-    filter(variable %in% toupper(variables))
+    filter(.data$variable %in% toupper(variables))
 
   return(ans)
 }
 
 #' @title Download GHCNd Inventory File
+#'
+#' @importFrom utils download.file
 #'
 #' @export
 #'
@@ -82,7 +84,7 @@ filter_stations <- function(stations, roi) {
     geom = c("longitude", "latitude"), 
     crs = crs("EPSG:4326")
   )
-  stations <- mask(stations, italy)
+  stations <- mask(stations, roi)
   # NOTE: check if relate within is the same as mask()
   # within <- relate(stations, roi, "within")  
   # within <- rowSums(within) >= 1
@@ -93,8 +95,8 @@ filter_stations <- function(stations, roi) {
       longitude = stations |> geom() |> as_tibble() |> pull("x"),
       latitude = stations |> geom() |> as_tibble() |> pull("y")
     ) |> 
-    relocate(latitude, .after = "station") |> 
-    relocate(longitude, .after = "latitude")
+    relocate(.data$latitude, .after = "station") |> 
+    relocate(.data$longitude, .after = "latitude")
 
   return(ans)
 }
