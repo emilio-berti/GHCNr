@@ -38,7 +38,6 @@
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
 #' @param variables Character, vector of the variables to include.
-#' @param include_flags Logical, if to include flagged records.
 #'
 #' @details
 #' \emph{station_id} can be a vector with multiple stations.
@@ -49,8 +48,7 @@
   station_id,
   start_date,
   end_date,
-  variables,
-  include_flags
+  variables
 ) {
   if (nchar(strsplit(start_date, "-")[[1]][1]) < 4) {
     warning("   date format should be YYYY-MM-DD")
@@ -80,7 +78,7 @@
     "endDate=", end_date, "&",
     "units=metric", "&",
     "dataTypes=", paste(toupper(variables), collapse = ","), "&",
-    "includeAttributes=", ifelse(include_flags, "true", "false"), "&",
+    "includeAttributes=true&",
     "format=json"
   )
   return(req)
@@ -99,7 +97,6 @@
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
 #' @param variables Character, vector of the variables to include.
-#' @param remove_flagged Logical, if to remove flagged records.
 #'
 #' @details
 #' \emph{station_id} can be a vector with multiple stations.
@@ -112,67 +109,80 @@ daily <- function(
   start_date,
   end_date,
   variables = c("tmax", "tmin", "prcp"),
-  remove_flagged = TRUE
 ) {
   stopifnot(is.character(variables))
-  stopifnot(is.logical(remove_flagged))
 
   req <- .daily_request(
     station_id,
     start_date,
     end_date,
-    variables,
-    include_flags = FALSE
+    variables
   )
   daily_data <- request(req)
   daily_data <- req_perform(daily_data)
   body <- resp_body_json(daily_data)
+
   if (length(body) == 0) {
     stop("No data found")
   }
+
   daily_data <- body |> 
     bind_rows() |>
     rename_with(tolower) |>
-    mutate(date = as.Date(date))
-
-  if (remove_flagged) {
-    req_flags <- .daily_request(
-      station_id,
-      start_date,
-      end_date,
-      variables,
-      include_flags = TRUE
+    mutate(
+      date = as.Date(date),
+      across(contains("attributes"), ~.extract_flag(.x))
+    ) |> 
+    rename_with(
+      ~gsub("attributes", "flag", .x),
+      contains("attributes")
     )
-    flags_data <- request(req_flags)
-    flags_data <- req_perform(flags_data)
-    flags_body <- resp_body_json(flags_data)
-
-    daily_flags <- flags_body |> 
-      bind_rows() |>
-      rename_with(tolower) |>
-      select(contains("attributes")) |>
-      mutate(across(everything(), ~.extract_flag(.x)))
-
-    daily_flags_indices <- matrix(
-      as.matrix(daily_flags) %in% colnames(.flags()),
-      ncol = ncol(daily_flags),
-      byrow = FALSE
-    )
-
-    flagged_records <- sum(rowSums(daily_flags_indices) == 1)
-    if (flagged_records > 0) {
-      message(flagged_records, " flagged record(s):")
-      table(unlist(.flags()[daily_flags[daily_flags_indices]]))
-      daily_data <- daily_data[rowSums(daily_flags_indices) == 0, ]
-    }
-
-  }
 
   daily_data <- daily_data |> 
-    select("date", "station", any_of(variables)) |>
+    select("date", "station", any_of(variables), contains("flag")) |>
     mutate(across(any_of(variables), ~as.numeric(.x)))
 
   return(daily_data)
+  
+}
+
+#' @title Remove Flagged Recrods
+#'
+#' @importFrom dplyr mutate group_by tally ungroup select across
+#' @importFrom tidyr drop_na pivot_longer pivot_wider replace_na
+#' @importFrom tidyselect where matches
+#' @importFrom rlang .data
+#'
+#' @export
+#'
+#' @param x Object of class `daily`.
+#'
+#' @details dates should be given in `YYYY-mm-dd` format.
+#'
+#' @return A tibble with the stations within the `roi`.
+remove_flagged <- function(x) {
+  flagged <- matrix(
+    as.matrix(x |> select(contains("flag"))) %in% colnames(.flags()),
+    ncol = ncol(x |> select(contains("flag"))),
+    byrow = FALSE
+  )
+  n_flagged <- sum(rowSums(flagged) >= 1)
+  if (n_flagged > 0) {
+    message("Removing ", n_flagged, " flagged record(s):")
+    flags <- x |> 
+      select(contains("flag")) |> 
+      unlist() |> 
+      table()
+    flags <- flags[names(flags) %in% colnames(.flags())]
+    for (i in seq_along(flags)) {
+      message(" - ", flags[i], " ", .flags()[names(flags)[i]], "(s)")
+    }
+    x <- x[rowSums(flagged) == 0, ]
+    x <- x |> select(-contains("flag"))
+  } else {
+    message("No flagged records found.")
+  }
+  return (x)
 }
 
 #' @title Calculate Coverage of Daily Summaries
@@ -189,7 +199,6 @@ daily <- function(
 #' @details dates should be given in `YYYY-mm-dd` format.
 #'
 #' @return A tibble with the stations within the `roi`.
-#'
 daily_coverage <- function(x) {
   stopifnot(is(x, "daily"))
   coverage <- x |>
