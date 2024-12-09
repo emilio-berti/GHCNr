@@ -31,7 +31,7 @@ stations <- stations(inventory_file, variables = "TMAX")
 stations
 ```
 
-```{r download-inventory, echo=FALSE}
+```{r read-inventory, echo=FALSE}
 stations <- stations(variables = "TMAX")
 stations
 ```
