@@ -25,9 +25,14 @@ The station inventory file of GHCNd is stored at <https://www.ncei.noaa.gov/prod
 The function `stations()` can read from this source or from a local file, specified with `filename`.
 The inventory can also be downloaded to a file using `download_inventory()`.
 
-```{r download-inventory}
+```{r download-inventory, eval=FALSE}
 inventory_file <- download_inventory("~/Downloads/ghcn-inventory.txt")
 stations <- stations(inventory_file, variables = "TMAX")
+stations
+```
+
+```{r download-inventory, echo=FALSE}
+stations <- stations(variables = "TMAX")
 stations
 ```
 By specifying `variables = "TMAX"` only the stations that recorded that variable are kept.
