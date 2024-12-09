@@ -1,11 +1,13 @@
 #' @title GHCNd Flags
 #'
+#' @importFrom tibble tibble
+#'
 #' @export
 #'
 #' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
 #' @return Table with flags.
 .flags <- function() {
-  ans <- data.frame(
+  ans <- tibble(
     "D" = "duplicate flag",
     "I" = "consistency flag",
     "K" = "streak flag",
@@ -191,6 +193,7 @@ remove_flagged <- function(x) {
 #' @importFrom tidyr drop_na pivot_longer pivot_wider replace_na
 #' @importFrom tidyselect where matches any_of
 #' @importFrom rlang .data
+#' @importFrom tibble tibble
 #'
 #' @export
 #'
