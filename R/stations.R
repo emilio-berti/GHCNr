@@ -1,57 +1,46 @@
-#' @title Get Stations for Area
-#' 
-#' @importFrom methods is
-#' @importFrom terra vect plot points aggregate project crs relate xmin xmax ymin ymax
-#' @importFrom tibble as_tibble
-#' @importFrom utils read.table download.file
-#' 
+#' @title The GHCNd Inventory URL
+#'
 #' @export
-#' 
-#' @param roi SpatVector defining the region of interest.
-#' @param show Logical, show the stations on a map?
-#' 
-#' @return A tibble with the stations within the `roi`.
-#' 
-stations <- function(roi, show = FALSE) {
-  stopifnot(is(roi, "SpatVector"))
-  if (length(roi) > 1) roi <- aggregate(roi)
+#'
+#' @return A string of the URL.
+.inventory_url <- function() {
+  return("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt")
+}
 
-  # allows to recycle downloaded file if it was already downloaded
-  # during this R session.
-  if (is.null(getOption("stations_file"))) {
-    message("Downloading stations inventory...")
-    inventory <- tempfile()
-    download.file(
-      "https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt",
-      inventory
-    )
-    options("stations_file" = inventory)
-  } else {
-    inventory <- getOption("stations_file")
+#' @title Get GHCNd Inventory
+#'
+#' @importFrom readr read_table
+#' @importFrom dplyr filter
+#'
+#' @export
+#'
+#' @param filename Character of the filename of the inventory, if already downloaded.
+#' @param variables Character, vector of the variables to include.
+#'
+#' @return A tibble with the station inventory.
+#' 
+#' @details
+#' If \emph{filename} is not provided, this will download the inventory from
+#' <"https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt">.
+#' In alternative, you can download the invetory yourself and load it (see examples).
+#' @examples
+#' \dontrun{
+#' dest <- tempfile()
+#' download.file("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt", dest)
+#' s <- stations(dest)
+#' }
+stations <- function(filename, variables = c("tmin", "tmax", "prcp")) {
+  if (missing(filename)) {
+    src <- .inventory_url()
+  } else{
+    src <- filename
   }
-  
-  stations <- read.table(
-    inventory,
-    header = FALSE,
-    col.names = c("id", "lat", "lon", "dataType", "start", "end")
+  ans <- read_table(
+    src,
+    col_names = c("station", "longitude", "latitude", "variable", "startYear", "endYear"),
+    show_col_types = FALSE
   ) |> 
-    as_tibble()
-  
-  # filter by bbox
-  stations <- stations[stations$lon >= xmin(roi), ]
-  stations <- stations[stations$lon <= xmax(roi), ]
-  stations <- stations[stations$lat >= ymin(roi), ]
-  stations <- stations[stations$lat <= ymax(roi), ]
-  stations <- stations |> vect(crs = "EPSG:4326")  
+    filter(variable %in% toupper(variables))
 
-  if (crs(stations) != crs(roi)) stations <- project(stations, roi)
-  # s <- stations[relate(stations, roi, "within", pairs = FALSE)[, 1], ]
-  stations <- mask(stations, roi)
-
-  if (show) {
-    plot(roi, col = "grey90")
-    points(stations, col = "grey20", bg = "dodgerblue", pch = 21, cex = 1.5)    
-  }
-
-  return(stations)
+  return(ans)
 }
