@@ -1,5 +1,6 @@
-#' @title Calculate Monthly Summaries
+#' @title Calculate Annual Summaries
 #'
+#' @importFrom methods is
 #' @importFrom dplyr select mutate across distinct_all summarize group_by left_join
 #' @importFrom tidyselect contains everything all_of
 #' @importFrom tidyr drop_na
@@ -14,8 +15,8 @@
 #' \emph{x} is the table returned from \code{get_ghcn_daily()} or 
 #' \code{remove_flagged()} or any subset of them.
 #'
-#' @return A tibble with the monthly timeseries at the stations.
-monthly <- function(x) {
+#' @return A tibble with the annual timeseries at the stations.
+annual <- function(x) {
 
   if (any(grepl("flag", colnames(x)))) {
     flags <- x |> 
@@ -35,11 +36,8 @@ monthly <- function(x) {
   }
 
   ans <- x |>
-    mutate(
-      year = format(date, "%Y"),
-      month = format(date, "%m")
-    ) |> 
-    group_by(.data$station, .data$year, .data$month) |>
+    mutate(year = format(date, "%Y")) |> 
+    group_by(.data$station, .data$year) |>
     summarize(
       tmin = .min(.data$tmin),
       tmax = .max(.data$tmax),
@@ -48,16 +46,15 @@ monthly <- function(x) {
       .groups = "drop"
     ) |>
     select(-all_of(missing_variable)) |> 
-    mutate(
-      year = as.numeric(year),
-      month = as.numeric(month)
-    )
+    mutate(year = as.numeric(year))
   
   ans <- ans |> 
     left_join(
-      coverage(x) |> select("station", "monthly_coverage", "year", "month"),
-      by = c("station", "year", "month")
+      coverage(x) |> 
+        select("station", "annual_coverage", "year") |> 
+        distinct_all(),
+      by = c("station", "year")
     )
-
+  
   return(ans)
 }

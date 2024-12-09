@@ -88,16 +88,16 @@ daily_ts <- remove_flagged(daily_ts)
 daily_ts
 ```
 
-Coverage of the timeseries can be calculated using `daily_coverage()`.
+Coverage of the timeseries can be calculated using `coverage()`.
 ```{r daily-coverage}
-coverage <- daily_coverage(daily_ts)
+station_coverage <- coverage(daily_ts)
 ```
 The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`year`).
 `annual_coverage` is constant within the same year and `year` is always a constant.
 
 ```{r coverages}
-coverage[coverage$monthly_coverage < 1, ]
-with(coverage[coverage$month == 1, ],
+station_coverage[station_coverage$monthly_coverage < 1, ]
+with(station_coverage[station_coverage$month == 1, ],
   barplot(
     annual_coverage,
     names.arg = year,
@@ -130,4 +130,11 @@ legend(
   legend = unique(daily_ts$year)[seq(1, 35, 5)],
   fill = palette[seq(1, 35, 5)]
 )
+```
+
+# Monthly and Annual timeseries
+
+```{r monthly}
+monthly_ts <- monthly(daily_ts)
+annual_ts <- annual(daily_ts)
 ```
