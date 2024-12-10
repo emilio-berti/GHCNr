@@ -13,27 +13,11 @@ A table 253 x 2:
 \item{iso3}{3 letter ISO country code}
 }
 }
-
-\subsection{\code{europe_codes}}{
-
-A table 128,024 x 2:
-\describe{
-\item{station}{Station name}
-\item{elevation}{Elevation in meters}
-}
-}
-}
-\source{
-\url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.csv}
 }
 \usage{
-country_codes
-
 country_codes
 }
 \description{
 Countries ISO Codes
-
-Elevation of the GHCNd Stations
 }
 \keyword{datasets}

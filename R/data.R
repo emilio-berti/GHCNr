@@ -32,4 +32,4 @@
 #'   \item{elevation}{Elevation in meters}
 #' }
 #' @source <https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.csv>
-"country_codes"
+"stations_elevation"
