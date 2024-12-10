@@ -1,13 +1,12 @@
 #' Countries ISO Codes
 #'
 #' @format ## `europe_codes`
-#' A table 50 x 3:
+#' A table 253 x 2:
 #' \describe{
 #'   \item{name}{Country name}
-#'   \item{iso2, iso3}{2 & 3 letter ISO country codes}
+#'   \item{iso3}{3 letter ISO country code}
 #' }
-#' @source <https://www.countrycallingcodes.com/iso-country-codes/europe-codes.php>
-"europe_codes"
+"country_codes"
 
 #' Maximum Temperature for Station CA003076680
 #'
