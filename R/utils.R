@@ -161,7 +161,7 @@ plot.ghcn_annual <- function(x, variable, ...) {
 #' @importFrom tibble tibble
 #' @export
 #' @param strict Logical, if to include all flags (TRUE) or not (FALSE).
-#' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
+#' @details <https://doi.org/10.1175/2010JAMC2375.1>
 #' @return Table with flags.
 .flags <- function(strict) {
   ans <- tibble(

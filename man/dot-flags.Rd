@@ -16,5 +16,5 @@ Table with flags.
 GHCNd Flags
 }
 \details{
-\url{https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily}
+\url{https://doi.org/10.1175/2010JAMC2375.1}
 }
