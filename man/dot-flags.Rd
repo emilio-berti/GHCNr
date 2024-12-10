@@ -6,6 +6,9 @@
 \usage{
 .flags(strict)
 }
+\arguments{
+\item{strict}{Logical, if to include all flags (TRUE) or not (FALSE).}
+}
 \value{
 Table with flags.
 }

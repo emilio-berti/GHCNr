@@ -1,11 +1,12 @@
 #' @title Plot GHCN Timeseries
 #' @param x Object of class ghcn_daily.
 #' @param variable Name of the variable to plot.
+#' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis
+#' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
-#' plot(CA003076680)
+#' plot(CA003076680, "tmax")
 plot.ghcn_daily <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_daily"))
   stopifnot(variable %in% c("tmin", "tmax", "prcp"))
@@ -53,11 +54,12 @@ plot.ghcn_daily <- function(x, variable, ...) {
 #' @title Plot GHCN Timeseries
 #' @param x Object of class ghcn_monthly.
 #' @param variable Name of the variable to plot.
+#' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis
+#' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
-#' plot(monthly(CA003076680))
+#' plot(monthly(CA003076680), "tmax")
 plot.ghcn_monthly <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_monthly"))
   stopifnot(variable %in% c("tmin", "tmax", "prcp"))
@@ -108,11 +110,12 @@ plot.ghcn_monthly <- function(x, variable, ...) {
 #' @title Plot GHCN Timeseries
 #' @param x Object of class ghcn_annual.
 #' @param variable Name of the variable to plot.
+#' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis
+#' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
-#' plot(annual(CA003076680))
+#' plot(annual(CA003076680), "tmax")
 plot.ghcn_annual <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_annual"))
   stopifnot(variable %in% c("tmin", "tmax", "prcp"))
@@ -155,11 +158,9 @@ plot.ghcn_annual <- function(x, variable, ...) {
 }
 
 #' @title GHCNd Flags
-#'
 #' @importFrom tibble tibble
-#'
 #' @export
-#'
+#' @param strict Logical, if to include all flags (TRUE) or not (FALSE).
 #' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
 #' @return Table with flags.
 .flags <- function(strict) {
@@ -229,9 +230,9 @@ plot.ghcn_annual <- function(x, variable, ...) {
 #' @details This function calculates the temporal coverage of stations.
 #' It returns a table with:
 #' \itemize{
-#'  \item{"mothly_coverage"}{The proportion of the days with records in the month}
-#'  \item{"annual_coverage"}{The proportion of the days with records in the year}
-#'  \item{"annual_coverage"}{The proportion of the years with records in the reference period}
+#'  \item mothly_coverage The proportion of the days with records in the month
+#'  \item annual_coverage The proportion of the days with records in the year
+#'  \item annual_coverage The proportion of the years with records in the reference period
 #' }
 #' Important: that 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1', 
 #' but rather that all years have at least one record.

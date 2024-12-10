@@ -19,9 +19,9 @@ Calculate Coverage of Daily Summaries
 This function calculates the temporal coverage of stations.
 It returns a table with:
 \itemize{
-\item{"mothly_coverage"}{The proportion of the days with records in the month}
-\item{"annual_coverage"}{The proportion of the days with records in the year}
-\item{"annual_coverage"}{The proportion of the years with records in the reference period}
+\item mothly_coverage The proportion of the days with records in the month
+\item annual_coverage The proportion of the days with records in the year
+\item annual_coverage The proportion of the years with records in the reference period
 }
 Important: that 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1',
 but rather that all years have at least one record.

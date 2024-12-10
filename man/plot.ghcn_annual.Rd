@@ -10,10 +10,12 @@
 \item{x}{Object of class ghcn_annual.}
 
 \item{variable}{Name of the variable to plot.}
+
+\item{...}{additional arguments to be passed to \code{plot()}.}
 }
 \description{
 Plot GHCN Timeseries
 }
 \examples{
-plot(annual(CA003076680))
+plot(annual(CA003076680), "tmax")
 }
