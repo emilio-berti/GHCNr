@@ -67,7 +67,7 @@ download_inventory <- function(filename) {
 
 #' @title Spatial Filtering of Stations
 #'
-#' @importFrom terra vect relate crs geom
+#' @importFrom terra vect relate crs geom mask
 #' @importFrom tibble as_tibble
 #' @importFrom dplyr mutate relocate pull
 #'
