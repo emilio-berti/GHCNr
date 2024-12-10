@@ -4,7 +4,8 @@ Version: 0.4.0
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-9286-011X"))
-Description: Download daily summaries from the GHCNd weather station array.
+Description: The goal of 'GHCNr' is to provide a fast and friendly interface with the Global Historical Climatology Network daily (GHCNd) database, which contains daily summaries of weather station data worldwide (<https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>). GHCNd is accessed through the web API <https://www.ncei.noaa.gov/access/services/data/v1>. 'GHCNr' main functionalities consist of downloading data from GHCNd, filter it, and to aggregate it at monthly and annual scales.
+
 License: MIT + file LICENSE
 Imports:
     tibble,
