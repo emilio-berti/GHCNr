@@ -1,7 +1,5 @@
 #' @title The GHCNd Inventory URL
-#'
 #' @export
-#'
 #' @return A string of the URL.
 .inventory_url <- function() {
   return("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt")
@@ -26,7 +24,7 @@
 #' @examples
 #' \dontrun{
 #' dest <- tempfile()
-#' download.file("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt", dest)
+#' download_inventory(dest)
 #' s <- stations(dest)
 #' }
 stations <- function(filename, variables = c("tmin", "tmax", "prcp")) {
@@ -57,9 +55,13 @@ stations <- function(filename, variables = c("tmin", "tmax", "prcp")) {
 #' 
 #' @details
 #' Download the inventory from <"https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt">.
+#' @examples
+#' \dontrun{
+#' download_inventory(...)
+#' }
 download_inventory <- function(filename) {
   if (missing(filename)) stop("You need to specify a location for the inventory.")
-  download.file("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt", filename)  
+  download.file(.inventory_url(), filename)  
   return(filename)
 }
 
@@ -75,6 +77,13 @@ download_inventory <- function(filename) {
 #' @param roi, the geometry of the region of interest.
 #'
 #' @return Table with filtered stations.
+#'
+#' @examples
+#' \dontrun{
+#' inventory <- stations()
+#' roi <- get_country("ITA")
+#' s <- filter_stations(inventory, roi)
+#' }
 filter_stations <- function(stations, roi) {
   stopifnot("longitude" %in% colnames(stations))
   stopifnot("latitude" %in% colnames(stations))

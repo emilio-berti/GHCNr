@@ -25,7 +25,7 @@ In alternative, you can download the invetory yourself and load it (see examples
 \examples{
 \dontrun{
 dest <- tempfile()
-download.file("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt", dest)
+download_inventory(dest)
 s <- stations(dest)
 }
 }

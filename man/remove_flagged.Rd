@@ -4,10 +4,12 @@
 \alias{remove_flagged}
 \title{Remove Flagged Recrods}
 \usage{
-remove_flagged(x)
+remove_flagged(x, strict = FALSE)
 }
 \arguments{
 \item{x}{Object of class \code{daily}.}
+
+\item{strict}{Logical, if to remove also \code{looser} flags.}
 }
 \value{
 A tibble with the stations within the \code{roi}.
@@ -17,4 +19,7 @@ Remove Flagged Recrods
 }
 \details{
 dates should be given in \code{YYYY-mm-dd} format.
+}
+\examples{
+remove_flagged(CA003076680)
 }

@@ -13,5 +13,8 @@
 An object of class \code{monthly}.
 }
 \description{
-This function creates a new object of class \code{monthly}.
+Daily Class Constructor
+}
+\details{
+Creates a new object of class \code{monthly}.
 }

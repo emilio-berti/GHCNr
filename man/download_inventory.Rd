@@ -18,3 +18,8 @@ Download GHCNd Inventory File
 \details{
 Download the inventory from <"https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt">.
 }
+\examples{
+\dontrun{
+download_inventory(...)
+}
+}

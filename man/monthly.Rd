@@ -16,6 +16,9 @@ A tibble with the monthly timeseries at the stations.
 Calculate Monthly Summaries
 }
 \details{
-\emph{x} is the table returned from \code{get_ghcn_daily()} or
+\emph{x} is the table returned from \code{daily()} or
 \code{remove_flagged()} or any subset of them.
+}
+\examples{
+monthly(CA003076680)
 }

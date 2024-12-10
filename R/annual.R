@@ -15,8 +15,10 @@
 #' \code{remove_flagged()} or any subset of them.
 #'
 #' @return A tibble with the annual timeseries at the stations.
+#' @examples
+#' annual(CA003076680)
 annual <- function(x) {
-  stopifnot(inherits(x, "ghcn-daily"))
+  stopifnot(inherits(x, "ghcn_daily"))
 
   if (any(grepl("flag", colnames(x)))) {
     flags <- x |> 

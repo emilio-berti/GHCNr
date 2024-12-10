@@ -72,6 +72,11 @@
 #' Available \emph{variables} can be found at <https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt>.
 #'
 #' @return A tibble with the daily timeseries at the stations.
+#'
+#' @examples
+#' \dontrun{
+#' CA003076680 <- daily("CA003076680", "1990-01-01", "2024-12-31") 
+#' }
 daily <- function(
   station_id,
   start_date,
@@ -126,15 +131,19 @@ daily <- function(
 #' @export
 #'
 #' @param x Object of class `daily`.
+#' @param strict Logical, if to remove also `looser` flags.
 #'
 #' @details dates should be given in `YYYY-mm-dd` format.
 #'
 #' @return A tibble with the stations within the `roi`.
-remove_flagged <- function(x) {
-  stopifnot(inherits(x, "ghcn-daily"))
+#'
+#' @examples
+#' remove_flagged(CA003076680)
+remove_flagged <- function(x, strict = FALSE) {
+  stopifnot(inherits(x, "ghcn_daily"))
 
   flagged <- matrix(
-    as.matrix(x |> select(contains("flag"))) %in% colnames(.flags()),
+    as.matrix(x |> select(contains("flag"))) %in% colnames(.flags(strict)),
     ncol = ncol(x |> select(contains("flag"))),
     byrow = FALSE
   )
@@ -145,15 +154,15 @@ remove_flagged <- function(x) {
       select(contains("flag")) |> 
       unlist() |> 
       table()
-    flags <- flags[names(flags) %in% colnames(.flags())]
+    flags <- flags[names(flags) %in% colnames(.flags(strict))]
     for (i in seq_along(flags)) {
-      message(" - ", flags[i], " ", .flags()[names(flags)[i]], "(s)")
+      message(" - ", flags[i], " ", .flags(strict)[names(flags)[i]], "(s)")
     }
     x <- x[rowSums(flagged) == 0, ]
-    x <- x |> select(-contains("flag"))
   } else {
     message("No flagged records found.")
   }
+  x <- x |> select(-contains("flag"))
 
   return (x)
 }

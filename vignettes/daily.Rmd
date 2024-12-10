@@ -28,13 +28,12 @@ The inventory can also be downloaded to a file using `download_inventory()`.
 ```{r download-inventory, eval=FALSE}
 inventory_file <- download_inventory("~/Downloads/ghcn-inventory.txt")
 stations <- stations(inventory_file, variables = "TMAX")
-stations
 ```
 
-```{r read-inventory, echo=FALSE}
+```{r read-inventory}
 stations <- stations(variables = "TMAX")
-stations
 ```
+
 By specifying `variables = "TMAX"` only the stations that recorded that variable are kept.
 Available variables implemented at the moment are precipitation ("PRCP"), minimum temperature ("TMIN"), and maximum temperature ("TMAX").
 
@@ -50,6 +49,7 @@ Spatial boundaries of countries can be downloaded from <https://www.geoboundarie
 ```{r get-country}
 italy <- get_country("ITA")
 ```
+
 `get_countries()` can take several ISO3 codes to return a geometry of multiple countries.
 
 ```{r spatial-filter}
@@ -74,67 +74,112 @@ daily_ts <- daily(
 daily_ts
 ```
 
+Multiple stations can also be downloaded at once.
+```{r multidaily}
+daily_ts <- daily(
+  stations$station,
+  paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
+  paste("1991", "12", "31", sep = "-"),  # shorten a bit as example
+  variables = "tmin"
+)
+daily_ts
+```
+Too many stations will cause the API to fail.
+
 Implmented variables are "tmin", "tmax", and "prcp".
 `daily()` returns a table with the value of the variable chosen and associated flags.
-Only certain flags from GHCNd are implemented, namely:
+
+## Remove flagged records
+
+Flagged records can be removed using `remove_flagged()`.
+In `remove_flagged()` the argument `strict` (dafault = `FALSE`) specifies which flags to include.
+Flags always removed are:
 ```{r flags, echo=FALSE}
-GHCNr:::.flags()
+as.list(GHCNr:::.flags(strict = FALSE))
+```
+Whereas setting `strict = TRUE` will cause additional flags to be removed.
+```{r flags-strict, echo=FALSE}
+setdiff(GHCNr:::.flags(strict = TRUE), GHCNr:::.flags(strict = FALSE))
 ```
 
-Flagged records can be removed using `remove_flagged().
 This will also remove the "*_flag=" column.
 ```{r remove-flagged}
 daily_ts <- remove_flagged(daily_ts)
 daily_ts
 ```
 
+# Temporal coverage
 Coverage of the timeseries can be calculated using `coverage()`.
 ```{r daily-coverage}
 station_coverage <- coverage(daily_ts)
 ```
+
 The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`year`).
 `annual_coverage` is constant within the same year and `year` is always a constant.
+This table is useful to inspect stations that may have problematic timeseries, such as 
+```{r low-coverage}
+station_coverage[station_coverage$annual_coverage < 0.5, ]
+```
 
-```{r coverages}
-station_coverage[station_coverage$monthly_coverage < 1, ]
-with(station_coverage[station_coverage$month == 1, ],
-  barplot(
-    annual_coverage,
-    names.arg = year,
-    las = 2
-  )
+In this case, there are several stations that have low coverage and that will be removed.
+```{r coverages, fig.width=6, fig.height=4}
+with(
+  unique(station_coverage[station_coverage$year == 1990, c("station", "year", "annual_coverage")]),
+  barplot(annual_coverage, names.arg = station, las = 2, main = "1990")
+)
+with(
+  unique(station_coverage[station_coverage$year == 1991, c("station", "year", "annual_coverage")]),
+  barplot(annual_coverage, names.arg = station, las = 2, main = "1991")
 )
 ```
 
 Note that missing years are not shown and that `year_coverage` only calculates the number of years that have been covered, not their internal coverage.
 
 ```{r plot-timeseries, echo=FALSE, fig.width=6, fig.height = 4}
-daily_ts$year <- as.numeric(format(daily_ts$date, "%Y"))
-daily_ts$day <- as.numeric(format(daily_ts$date, "%j"))
-palette <- hcl.colors(
-  diff(range(unique(daily_ts$year))) + 1,
-  "Zissou 1"
-)
+palette <- hcl.colors(length(unique(daily_ts$station)), "Roma")
+names(palette) <- unique(daily_ts$station)
 plot(
-  c(1, 365), range(daily_ts$tmin, na.rm = TRUE),
-  pch = NA, xlab = "Day of the year", ylab = "Tmin"
+  NULL, xlab = "", ylab = "Tmin",
+  xlim = range(daily_ts$date),
+  ylim = range(daily_ts$tmin, na.rm = TRUE),
+  axes = FALSE
 )
-for (y in unique(daily_ts$year)) {
+axis(2, seq(-20, 20, by = 10))
+axis(
+  1,
+  seq(min(daily_ts$date), max(daily_ts$date), length.out = 2),
+  labels = c("1990", "1991")
+)
+for (s in unique(daily_ts$station)) {
   with(
-    daily_ts[daily_ts$year == y, ],
-    lines(day, tmin, col = palette[as.numeric(y) - 1989], lw = 1.2)
+    daily_ts[daily_ts$station == s, ],
+    lines(date, tmin, col = palette[s])
   )
 }
-legend(
-  x = 0, y = 20,
-  legend = unique(daily_ts$year)[seq(1, 35, 5)],
-  fill = palette[seq(1, 35, 5)]
-)
+legend(7300, 29, fill = palette, legend = names(palette), bg = adjustcolor("white", alpha.f = .75), cex = .6)
 ```
 
-# Monthly and Annual timeseries
+# Monthly and annual timeseries, climatological normals
+
+The functions `monthly()`, `annual()` nad `normal()` summarized the weather time series to monthly and annual time series and to climatological normal (long-term averages), respectively.
+Summaries are calculated as follows:
+
+  - $T_{min}$ is the minimum daily temperature recorded in the month or the year.
+  - $T_{max}$ is the maximum daily temperature recorded in the month or the year.
+  - $Prcp$ is the cumulative precipitation during the month or year.
+
+`NA`s are removed during calculation.
+
 
 ```{r monthly}
 monthly_ts <- monthly(daily_ts)
+monthly_ts
+plot(monthly_ts, "tmax")
+```
+
+```{r annual}
 annual_ts <- annual(daily_ts)
+annual_ts
+plot(annual(daily_ts), "tmax")
+# normals <- normal(daily_ts) # to be implemented
 ```

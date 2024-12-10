@@ -11,6 +11,10 @@
 #' @details <https://github.com/wmgeolab/geoBoundaries>.
 #'
 #' @return A shapefile.
+#' @examples
+#' \dontrun{
+#' italy <- get_country("ITA")
+#' }
 get_country <- function(
   country_code,
   simplified = TRUE
@@ -48,6 +52,11 @@ get_country <- function(
 #' @details <https://github.com/wmgeolab/geoBoundaries>.
 #'
 #' @return A shapefile.
+#'
+#' @examples
+#' \dontrun{
+#' eu <- get_countries(europe_codes$iso3, simplified = TRUE)
+#' }
 get_countries <- function(
   countries_code,
   simplified = TRUE

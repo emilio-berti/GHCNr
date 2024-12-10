@@ -4,7 +4,7 @@
 \alias{.flags}
 \title{GHCNd Flags}
 \usage{
-.flags()
+.flags(strict)
 }
 \value{
 Table with flags.

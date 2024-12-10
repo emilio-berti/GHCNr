@@ -19,3 +19,6 @@ Calculate Annual Summaries
 \emph{x} is the table returned from \code{get_ghcn_daily()} or
 \code{remove_flagged()} or any subset of them.
 }
+\examples{
+annual(CA003076680)
+}

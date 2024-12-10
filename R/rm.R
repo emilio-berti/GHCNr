@@ -7,6 +7,9 @@
 #   variables = "tmax"
 # )
 # daily_ts
+# write.csv(daily_ts, "/tmp/daily.csv")
+# daily_ts <- read.csv("/tmp/daily.csv")
+
 # class(daily_ts)
 
 # monthly_ts <- monthly(daily_ts)

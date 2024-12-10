@@ -1,3 +1,159 @@
+#' @title Plot GHCN Timeseries
+#' @param x Object of class ghcn_daily.
+#' @param variable Name of the variable to plot.
+#' @importFrom grDevices hcl.colors
+#' @importFrom graphics plot axis.Date axis
+#' @export
+#' @examples
+#' plot(CA003076680)
+plot.ghcn_daily <- function(x, variable, ...) {
+  stopifnot(inherits(x, "ghcn_daily"))
+  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
+  op <- par(no.readonly = TRUE)
+  par(mar = c(8, 8, 1, 1))
+
+  n <- length(unique(x[["station"]]))
+  if (n == 1) {
+    palette <- "grey20"
+  } else {
+    palette <- hcl.colors(n, "Roma")
+  }
+  names(palette) <- unique(x[["station"]])
+  plot(
+    x$date, x[[variable]],
+    xlab = "",
+    ylab = toupper(variable),
+    col = palette[x[["station"]]],
+    pch = 3,
+    type = "n",
+    frame = FALSE,
+    axes = FALSE,
+    ...
+  )
+  axis.Date(
+    1,
+    at = seq(min(x$date), max(x$date) + 180, by = 90),
+    format = "%Y-%m-%d",
+    las = 2
+  )
+  yrange <- range(x[[variable]], na.rm = TRUE)
+  axis(
+    2,
+    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
+  )
+  for (s in unique(x[["station"]])) {
+    lines(
+      x$date[x$station == s], x[[variable]][x$station == s],
+      col = palette[s]
+    )
+  }
+  par(op)
+}
+
+#' @title Plot GHCN Timeseries
+#' @param x Object of class ghcn_monthly.
+#' @param variable Name of the variable to plot.
+#' @importFrom grDevices hcl.colors
+#' @importFrom graphics plot axis.Date axis
+#' @export
+#' @examples
+#' plot(monthly(CA003076680))
+plot.ghcn_monthly <- function(x, variable, ...) {
+  stopifnot(inherits(x, "ghcn_monthly"))
+  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
+  op <- par(no.readonly = TRUE)
+  par(mar = c(8, 8, 1, 1))
+
+  n <- length(unique(x[["station"]]))
+  if (n == 1) {
+    palette <- "grey20"
+  } else {
+    palette <- hcl.colors(n, "Roma")
+  }
+  names(palette) <- unique(x[["station"]])
+  years <- range(x[["year"]])
+  x$date <- as.Date(paste(x$year, x$month, "01", sep = "-"))
+  plot(
+    x$date, x[[variable]],
+    xlab = "",
+    ylab = toupper(variable),
+    col = palette[x[["station"]]],
+    pch = 3,
+    type = "n",
+    frame = FALSE,
+    axes = FALSE,
+    ...
+  )
+  axis.Date(
+    1,
+    at = seq(min(x$date), max(x$date) + 180, by = 90),
+    format = "%Y-%m-%d",
+    las = 2
+  )
+  yrange <- range(x[[variable]], na.rm = TRUE)
+  axis(
+    2,
+    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
+  )
+  for (s in unique(x[["station"]])) {
+    lines(
+      x$date[x$station == s], x[[variable]][x$station == s],
+      col = palette[s],
+      lw = 2
+    )
+  }
+  par(op)
+}
+
+#' @title Plot GHCN Timeseries
+#' @param x Object of class ghcn_annual.
+#' @param variable Name of the variable to plot.
+#' @importFrom grDevices hcl.colors
+#' @importFrom graphics plot axis.Date axis
+#' @export
+#' @examples
+#' plot(annual(CA003076680))
+plot.ghcn_annual <- function(x, variable, ...) {
+  stopifnot(inherits(x, "ghcn_annual"))
+  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
+  op <- par(no.readonly = TRUE)
+  par(mar = c(8, 8, 1, 1))
+
+  n <- length(unique(x[["station"]]))
+  if (n == 1) {
+    palette <- "grey20"
+  } else {
+    palette <- hcl.colors(n, "Roma")
+  }
+  names(palette) <- unique(x[["station"]])
+  years <- range(x[["year"]])
+  plot(
+    x$year, x[[variable]],
+    xlab = "",
+    ylab = toupper(variable),
+    col = palette[x[["station"]]],
+    pch = 3,
+    type = "n",
+    frame = FALSE,
+    axes = FALSE,
+    ...
+  )
+  axis(1, at = seq(years[1], years[2], by = 1), las = 2)
+  yrange <- range(x[[variable]], na.rm = TRUE)
+  axis(
+    2,
+    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
+  )
+  for (s in unique(x[["station"]])) {
+    lines(
+      x$year[x$station == s], x[[variable]][x$station == s],
+      col = palette[s],
+      lw = 3
+    )
+  }
+  par(op)
+}
+
 #' @title GHCNd Flags
 #'
 #' @importFrom tibble tibble
@@ -6,15 +162,26 @@
 #'
 #' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
 #' @return Table with flags.
-.flags <- function() {
+.flags <- function(strict) {
   ans <- tibble(
     "D" = "duplicate flag",
     "I" = "consistency flag",
     "K" = "streak flag",
     "M" = "mega flag",
     "N" = "naught flag",
-    "R" = "lagged range flag"
+    "R" = "lagged range flag",
+    "X" = "bounds flag"
   )
+  if (strict) {
+  ans <- ans |>
+    mutate(
+      "O" = "outlier flag",
+      "G" = "gap flag", 
+      "L" = "multiday flag",
+      "S" = "spatial consistency flag",
+      "Z" = "Datzilla flag"
+    )
+  }
   return(ans)
 }
 
@@ -57,13 +224,25 @@
 #'
 #' @export
 #'
-#' @param x Object of class `daily`.
+#' @param x Object of class `ghcn_daily`.
 #'
-#' @details dates should be given in `YYYY-mm-dd` format.
+#' @details This function calculates the temporal coverage of stations.
+#' It returns a table with:
+#' \itemize{
+#'  \item{"mothly_coverage"}{The proportion of the days with records in the month}
+#'  \item{"annual_coverage"}{The proportion of the days with records in the year}
+#'  \item{"annual_coverage"}{The proportion of the years with records in the reference period}
+#' }
+#' Important: that 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1', 
+#' but rather that all years have at least one record.
 #'
 #' @return A tibble with the stations within the `roi`.
+#' @examples
+#' cleaned <- remove_flagged(CA003076680)
+#' cover <- coverage(cleaned)
+#' cover[cover$month == 1, ]
 coverage <- function(x) {
-  stopifnot(inherits(x, "ghcn-daily"))
+  stopifnot(inherits(x, "ghcn_daily"))
 
   coverage <- x |> 
     drop_na() |> 
@@ -73,13 +252,13 @@ coverage <- function(x) {
       month = format(.data$date, "%m"),
       day = format(.data$date, "%d"),
     ) |>
-    group_by(.data$year, .data$month) |> 
+    group_by(.data$station, .data$year, .data$month) |> 
     add_tally() |> 
-    left_join(.days_in_month(), by = "month") |> 
+    left_join(.days_in_month(), by = c("month")) |> 
     mutate(monthly_coverage = .data$n / .data$days) |> 
     ungroup() |> 
     select(-"n") |> 
-    group_by(.data$year) |> 
+    group_by(.data$station, .data$year) |> 
     add_tally() |> 
     mutate(
       annual_coverage = .data$n / 365,

@@ -7,7 +7,7 @@
 coverage(x)
 }
 \arguments{
-\item{x}{Object of class \code{daily}.}
+\item{x}{Object of class \code{ghcn_daily}.}
 }
 \value{
 A tibble with the stations within the \code{roi}.
@@ -16,5 +16,18 @@ A tibble with the stations within the \code{roi}.
 Calculate Coverage of Daily Summaries
 }
 \details{
-dates should be given in \code{YYYY-mm-dd} format.
+This function calculates the temporal coverage of stations.
+It returns a table with:
+\itemize{
+\item{"mothly_coverage"}{The proportion of the days with records in the month}
+\item{"annual_coverage"}{The proportion of the days with records in the year}
+\item{"annual_coverage"}{The proportion of the years with records in the reference period}
+}
+Important: that 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1',
+but rather that all years have at least one record.
+}
+\examples{
+cleaned <- remove_flagged(CA003076680)
+cover <- coverage(cleaned)
+cover[cover$month == 1, ]
 }

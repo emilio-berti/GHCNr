@@ -26,3 +26,8 @@ Download Daily Summaries
 Dates should be given in \code{YYYY-mm-dd} format.
 Available \emph{variables} can be found at \url{https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt}.
 }
+\examples{
+\dontrun{
+CA003076680 <- daily("CA003076680", "1990-01-01", "2024-12-31") 
+}
+}

@@ -17,3 +17,10 @@ Table with filtered stations.
 \description{
 Spatial Filtering of Stations
 }
+\examples{
+\dontrun{
+inventory <- stations()
+roi <- get_country("ITA")
+s <- filter_stations(inventory, roi)
+}
+}

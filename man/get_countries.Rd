@@ -20,3 +20,8 @@ Download multiple countries' shapefiles from geoBoundaries
 \details{
 \url{https://github.com/wmgeolab/geoBoundaries}.
 }
+\examples{
+\dontrun{
+eu <- get_countries(europe_codes$iso3, simplified = TRUE)
+}
+}

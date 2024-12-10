@@ -20,3 +20,8 @@ Download country shapefile from geoBoundaries
 \details{
 \url{https://github.com/wmgeolab/geoBoundaries}.
 }
+\examples{
+\dontrun{
+italy <- get_country("ITA")
+}
+}

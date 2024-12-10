@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{europe_codes}}{
 
-A table of 50 x 3 with columns:
+A table 50 x 3:
 \describe{
 \item{name}{Country name}
 \item{iso2, iso3}{2 & 3 letter ISO country codes}

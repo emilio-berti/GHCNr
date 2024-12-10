@@ -11,12 +11,15 @@
 #' @param x Table of the daily timeseries.
 #'
 #' @details
-#' \emph{x} is the table returned from \code{get_ghcn_daily()} or 
+#' \emph{x} is the table returned from \code{daily()} or 
 #' \code{remove_flagged()} or any subset of them.
 #'
 #' @return A tibble with the monthly timeseries at the stations.
+#'
+#' @examples
+#' monthly(CA003076680)
 monthly <- function(x) {
-  stopifnot(inherits(x, "ghcn-daily"))
+  stopifnot(inherits(x, "ghcn_daily"))
 
   if (any(grepl("flag", colnames(x)))) {
     flags <- x |> 
