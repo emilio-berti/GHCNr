@@ -12,7 +12,7 @@
 #' Dates should be given in `YYYY-mm-dd` format.
 #'
 #' @return Character string with the API URL.
-.daily_request <- function(
+.daily_url <- function(
   station_id,
   start_date,
   end_date,
@@ -52,10 +52,28 @@
   return(req)
 }
 
+#' @title Request Daily Summaries
+#' @importFrom httr2 request req_perform resp_body_json
+#' @export
+#' @param url Character, URL of the request.
+#' @return Body of the JSON request.
+.daily_request <- function(url) {
+  url <- 
+  req <- request(url)
+  req <- req_perform(req)
+  body <- resp_body_json(req)
+
+  if (length(body) == 0) {
+    stop("No data found")
+  }
+
+  return(body)
+
+}
+
 #' @title Download Daily Summaries
 #'
 #' @importFrom dplyr bind_rows mutate rename_with across group_by tally select
-#' @importFrom httr2 request req_perform resp_body_json
 #' @importFrom tidyselect matches contains everything any_of
 #' @importFrom rlang .data
 #'
@@ -85,19 +103,13 @@ daily <- function(
 ) {
   stopifnot(is.character(variables))
 
-  req <- .daily_request(
+  url <- .daily_url(
     station_id,
     start_date,
     end_date,
     variables
   )
-  daily_data <- request(req)
-  daily_data <- req_perform(daily_data)
-  body <- resp_body_json(daily_data)
-
-  if (length(body) == 0) {
-    stop("No data found")
-  }
+  body <- .daily_request(url)
 
   daily_data <- body |> 
     bind_rows() |>

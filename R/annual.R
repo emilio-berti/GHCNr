@@ -20,22 +20,9 @@
 annual <- function(x) {
   stopifnot(inherits(x, "ghcn_daily"))
 
-  if (any(grepl("flag", colnames(x)))) {
-    flags <- x |> 
-      select(contains("flag")) |> 
-      mutate(across(everything(), ~ifelse(.x == "", NA, .x))) |> 
-      drop_na()
-    if (nrow(flags >= 1)) warning("Flags found. Consider removing flagged records, e.g. remove_flagged")
-    x <- x |> select(-contains("flag"))
-  }
-
-  # add variables to not break summarize
-  if (!all(c("tavg", "tmin", "tmax", "prcp") %in% colnames(x))) {
-    missing_variable <- setdiff(c("tavg", "tmin", "tmax", "prcp"), colnames(x))
-    for (v in missing_variable) {
-      x[[v]] <- -9999
-    }
-  }
+  x <- .drop_flags(x)
+  missing_variable <- .missing_variables(x)
+  x <- .add_variables(x)
 
   ans <- x |>
     mutate(year = format(.data$date, "%Y")) |> 

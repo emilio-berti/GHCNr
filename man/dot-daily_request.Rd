@@ -2,26 +2,16 @@
 % Please edit documentation in R/daily.R
 \name{.daily_request}
 \alias{.daily_request}
-\title{Create Request URL for Daily Summaries}
+\title{Request Daily Summaries}
 \usage{
-.daily_request(station_id, start_date, end_date, variables)
+.daily_request(url)
 }
 \arguments{
-\item{station_id}{Character, station id(s).}
-
-\item{start_date}{Character, start date.}
-
-\item{end_date}{Character, end date.}
-
-\item{variables}{Character, vector of the variables to include.}
+\item{url}{Character, URL of the request.}
 }
 \value{
-Character string with the API URL.
+Body of the JSON request.
 }
 \description{
-Create Request URL for Daily Summaries
-}
-\details{
-\emph{station_id} can be a vector with multiple stations.
-Dates should be given in \code{YYYY-mm-dd} format.
+Request Daily Summaries
 }

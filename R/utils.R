@@ -1,211 +1,6 @@
-#' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_daily.
-#' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
-#' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis lines par
-#' @export
-#' @examples
-#' plot(CA003076680, "tmax")
-plot.ghcn_daily <- function(x, variable, ...) {
-  stopifnot(inherits(x, "ghcn_daily"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
-
-  n <- length(unique(x[["station"]]))
-  if (n == 1) {
-    palette <- "grey20"
-  } else {
-    palette <- hcl.colors(n, "Roma")
-  }
-  names(palette) <- unique(x[["station"]])
-  plot(
-    x$date, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis.Date(
-    1,
-    at = seq(min(x$date), max(x$date) + 180, by = 90),
-    format = "%Y-%m-%d",
-    las = 2
-  )
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$date[x$station == s], x[[variable]][x$station == s],
-      col = palette[s]
-    )
-  }
-  par(op)
-}
-
-#' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_monthly.
-#' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
-#' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis lines par
-#' @export
-#' @examples
-#' plot(monthly(CA003076680), "tmax")
-plot.ghcn_monthly <- function(x, variable, ...) {
-  stopifnot(inherits(x, "ghcn_monthly"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
-
-  n <- length(unique(x[["station"]]))
-  if (n == 1) {
-    palette <- "grey20"
-  } else {
-    palette <- hcl.colors(n, "Roma")
-  }
-  names(palette) <- unique(x[["station"]])
-  years <- range(x[["year"]])
-  x$date <- as.Date(paste(x$year, x$month, "01", sep = "-"))
-  plot(
-    x$date, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis.Date(
-    1,
-    at = seq(min(x$date), max(x$date) + 180, by = 90),
-    format = "%Y-%m-%d",
-    las = 2
-  )
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$date[x$station == s], x[[variable]][x$station == s],
-      col = palette[s],
-      lw = 2
-    )
-  }
-  par(op)
-}
-
-#' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_annual.
-#' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
-#' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis lines par
-#' @export
-#' @examples
-#' plot(annual(CA003076680), "tmax")
-plot.ghcn_annual <- function(x, variable, ...) {
-  stopifnot(inherits(x, "ghcn_annual"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
-
-  n <- length(unique(x[["station"]]))
-  if (n == 1) {
-    palette <- "grey20"
-  } else {
-    palette <- hcl.colors(n, "Roma")
-  }
-  names(palette) <- unique(x[["station"]])
-  years <- range(x[["year"]])
-  plot(
-    x$year, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis(1, at = seq(years[1], years[2], by = 1), las = 2)
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$year[x$station == s], x[[variable]][x$station == s],
-      col = palette[s],
-      lw = 3
-    )
-  }
-  par(op)
-}
-
-#' @title GHCNd Flags
-#' @importFrom tibble tibble
-#' @export
-#' @param strict Logical, if to include all flags (TRUE) or not (FALSE).
-#' @details <https://doi.org/10.1175/2010JAMC2375.1>
-#' @return Table with flags.
-.flags <- function(strict) {
-  ans <- tibble(
-    "D" = "duplicate flag",
-    "I" = "consistency flag",
-    "K" = "streak flag",
-    "M" = "mega flag",
-    "N" = "naught flag",
-    "R" = "lagged range flag",
-    "X" = "bounds flag"
-  )
-  if (strict) {
-  ans <- ans |>
-    mutate(
-      "O" = "outlier flag",
-      "G" = "gap flag", 
-      "L" = "multiday flag",
-      "S" = "spatial consistency flag",
-      "Z" = "Datzilla flag"
-    )
-  }
-  return(ans)
-}
-
-#' @title Extract GHCNd Flags
-#'
-#' @export
-#'
-#' @param x Character, vector of the flag as returned by the GHCNd API call.
-#'
-#' @details <https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>
-#' @return Character of the flag.
-.extract_flag <- function(x) {
-  x <- sapply(x, \(x) ifelse(is.na(x), ",,,", x))
-  x <- sapply(x, \(x) strsplit(x, ",")[[1]][2])
-  return(x)
-}
-
 #' @title Number of Days in Month
-#'
 #' @importFrom tibble tibble
-#'
 #' @export
-#'
 #' @return Table with number of days in the months.
 .days_in_month <- function() {
   ans <- tibble(
@@ -213,6 +8,35 @@ plot.ghcn_annual <- function(x, variable, ...) {
     days = c(  31,   28,   31,   30,   31,   30,   31,   31,   30,   31,   30,   31)
   )
   return(ans)
+}
+
+#' @title Check Ahich Variables Are Absent 
+#' @importFrom tibble tibble
+#' @export
+#' @param x Object of class `ghcn_daily`.
+#' @return Character vector
+.missing_variables <- function(x) {
+  stopifnot(inherits(x, "ghcn_daily") || inherits(x, "ghcn_monthly") || inherits(x, "ghcn_annual"))
+  ans <- setdiff(c("tavg", "tmin", "tmax", "prcp"), colnames(x))
+  return(ans)
+}
+
+#' @title Add Columns to Handle Summarize
+#' @importFrom tibble tibble
+#' @export
+#' @param x Object of class `ghcn_daily`.
+#' @return Table with number of days in the months.
+.add_variables <- function(x) {
+  stopifnot(inherits(x, "ghcn_daily") || inherits(x, "ghcn_monthly") || inherits(x, "ghcn_annual"))
+
+  # add variables to not break summarize
+  if (!all(c("tavg", "tmin", "tmax", "prcp") %in% colnames(x))) {
+    missing_variables <- .missing_variables(x)
+    for (v in missing_variables) {
+      x[[v]] <- -9999
+    }
+  }
+  return(x)
 }
 
 #' @title Calculate Coverage of Daily Summaries
