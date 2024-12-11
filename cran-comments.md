@@ -1,12 +1,17 @@
+# GHCNr v0.7.0
+
+## Comments about checks
+R CMD check --as-cran highlights (NOTE) the URL in DESCRIPTION: <https://www.ncei.noaa.gov/access/services/data/v1>.
+The URL is correct, but the API returns a 400 error if the whole API call is not specified (i.e. including query parameters).
+
 ## Acronyms
 
-GHCN = Global Historical Climatology Network (<https://www.ncei.noaa.gov/products/land-based-station>)
+  - GHCN = Global Historical Climatology Network (<https://www.ncei.noaa.gov/products/land-based-station>)
+  - GHCNd = Global Historical Climatology Network daily (<https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>)
 
-GHCNd = Global Historical Climatology Network daily (<https://www.ncei.noaa.gov/products/land-based-station/global-historical-climatology-network-daily>)
+## Pre-submission R CMD check --as-cran results
 
-## R CMD check --as-cran results
-
-About the NOTE from DESCRIPTION related to the URL <https://www.ncei.noaa.gov/access/services/data/v1>: the URL is correct, but the API returns a 400 error if the whole API call is not specified.
+R CMD check --as-cran GHCNr_0.7.0.tar.gz >> cran-comments.md
 
 ```bash
 * using log directory ‘/home/eb97ziwi/GHCNr.Rcheck’
