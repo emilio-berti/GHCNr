@@ -6,6 +6,7 @@
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
+#' @return NULL, called for side effects.
 #' plot(CA003076680, "tmax")
 plot.ghcn_daily <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_daily"))
@@ -59,6 +60,7 @@ plot.ghcn_daily <- function(x, variable, ...) {
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
+#' @return NULL, called for side effects.
 #' plot(monthly(CA003076680), "tmax")
 plot.ghcn_monthly <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_monthly"))
@@ -115,6 +117,7 @@ plot.ghcn_monthly <- function(x, variable, ...) {
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
 #' @examples
+#' @return NULL, called for side effects.
 #' plot(annual(CA003076680), "tmax")
 plot.ghcn_annual <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_annual"))

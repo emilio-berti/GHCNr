@@ -45,7 +45,7 @@
 #' @importFrom tidyr drop_na
 #' @export
 #' @param x Object of class ghcn_daily.
-#' @return The original objects without flags colum.
+#' @return The original objects without flags column.
 .drop_flags <- function(x) {
   stopifnot(inherits(x, "ghcn_daily"))
   if (any(grepl("flag", colnames(x)))) {
@@ -57,4 +57,25 @@
     x <- x |> select(-contains("flag"))
   }
   return(x)
+}
+
+#' @title Check Flags Columns
+#'
+#' @importFrom dplyr select distinct_all
+#' @importFrom tidyselect contains
+#' @export
+#' @param x Object of class ghcn_daily.
+#' @return NULL, called for side effects
+.check_flags <- function(x) {
+  stopifnot(inherits(x, "ghcn_daily"))
+  if (any(grepl("flag", colnames(x)))) {
+    flagged <- x |> 
+      select(contains("flag")) |> 
+      distinct_all() |> 
+      unlist() |> 
+      unique()
+    if (any(colnames(GHCNr::.flags(strict = TRUE)) %in% flagged)) {
+      warning("Flags found, considering dropping flagged records. See ?remove_flagged() for details.")
+    }
+  }
 }

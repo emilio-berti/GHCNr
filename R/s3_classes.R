@@ -24,7 +24,7 @@
 #' df <- as_daily(df)
 #' }
 as_daily <- function(data) {
-  if (inherits(ans, "ghcn_daily")) {
+  if (inherits(data, "ghcn_daily")) {
     stop("Already a ghcn_daily object")
   }
   stopifnot(inherits(data, "data.frame"))

@@ -13,9 +13,10 @@
 
 \item{...}{additional arguments to be passed to \code{plot()}.}
 }
+\value{
+NULL, called for side effects.
+plot(CA003076680, "tmax")
+}
 \description{
 Plot GHCN Timeseries
-}
-\examples{
-plot(CA003076680, "tmax")
 }
