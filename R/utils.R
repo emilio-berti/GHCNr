@@ -1,15 +1,3 @@
-#' @title Number of Days in Month
-#' @importFrom tibble tibble
-#' @export
-#' @return Table with number of days in the months.
-.days_in_month <- function() {
-  ans <- tibble(
-    month = c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12") ,
-    days = c(  31,   28,   31,   30,   31,   30,   31,   31,   30,   31,   30,   31)
-  )
-  return(ans)
-}
-
 #' @title Check Ahich Variables Are Absent 
 #' @importFrom tibble tibble
 #' @export

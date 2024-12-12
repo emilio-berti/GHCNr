@@ -164,6 +164,7 @@ period_coverage <- function(x) {
 #' @title Calculate Coverage of Daily Summaries
 #'
 #' @importFrom dplyr mutate group_by group_split select distinct_all left_join bind_cols bind_rows
+#' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect contains
 #' @importFrom stats interaction.plot
@@ -201,7 +202,7 @@ coverage <- function(x, graph = FALSE) {
   	x_splitted <- x |> 
   	  group_by(.data$station) |> 
   	  group_split()
-  	ans <- lapply(x_splitted, \(x) x |> as_daily() |> coverage(graph = FALSE))
+  	ans <- lapply(x_splitted, \(x) x |> as_daily() |> coverage(graph = FALSE) |> as_tibble())
   	ans <- bind_rows(ans)
   	return(ans)
   }
@@ -215,7 +216,8 @@ coverage <- function(x, graph = FALSE) {
     left_join(annual_coverage(x), by = c("year")) |> 
     select("station", "year", "month", contains("coverage")) |> 
     distinct_all() |> 
-    bind_cols(period_coverage(x))
+    bind_cols(period_coverage(x)) |> 
+    as_tibble()
 
   if (graph) {
   	with(
