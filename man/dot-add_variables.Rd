@@ -7,7 +7,7 @@
 .add_variables(x)
 }
 \arguments{
-\item{x}{Object of class \code{ghcn_daily}.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 }
 \value{
 Table with number of days in the months.

@@ -7,12 +7,12 @@
 remove_flagged(x, strict = FALSE)
 }
 \arguments{
-\item{x}{Object of class \code{daily}.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 
 \item{strict}{Logical, if to remove also \code{looser} flags.}
 }
 \value{
-A tibble with the stations within the \code{roi}.
+\code{x} without flagged records.
 }
 \description{
 Remove Flagged Recrods

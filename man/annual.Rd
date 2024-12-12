@@ -7,17 +7,13 @@
 annual(x)
 }
 \arguments{
-\item{x}{Table of the daily timeseries.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 }
 \value{
 A tibble with the annual timeseries at the stations.
 }
 \description{
 Calculate Annual Summaries
-}
-\details{
-\emph{x} is the table returned from \code{get_ghcn_daily()} or
-\code{remove_flagged()} or any subset of them.
 }
 \examples{
 annual(CA003076680)

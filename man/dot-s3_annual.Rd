@@ -2,7 +2,7 @@
 % Please edit documentation in R/s3_classes.R
 \name{.s3_annual}
 \alias{.s3_annual}
-\title{Daily Class Constructor}
+\title{Annual Class Constructor}
 \usage{
 .s3_annual(data = tibble::tibble())
 }
@@ -10,11 +10,11 @@
 \item{data}{A data frame or tibble to be used as the underlying data.}
 }
 \value{
-An object of class \code{annual}.
+An object of class \code{ghcn_annual}.
 }
 \description{
-Daily Class Constructor
+Annual Class Constructor
 }
 \details{
-Creates a new object of class \code{annual}.
+Creates a new object of class \code{ghcn_annual}.
 }

@@ -117,49 +117,31 @@ Coverage of the timeseries can be calculated using `coverage()`.
 station_coverage <- coverage(daily_ts)
 ```
 
-The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`year`).
+The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`period_coverage`).
 `annual_coverage` is constant within the same year and `year` is always a constant.
 This table is useful to inspect stations that may have problematic timeseries, such as 
 ```{r low-coverage}
-station_coverage[station_coverage$annual_coverage < 0.5, ]
+station_coverage[station_coverage$annual_coverage_tmin < 0.5, ]
 ```
 
-In this case, there are several stations that have low coverage and that will be removed.
-```{r coverages, fig.width=6, fig.height=4}
-with(
-  unique(station_coverage[station_coverage$year == 1990, c("station", "year", "annual_coverage")]),
-  barplot(annual_coverage, names.arg = station, las = 2, main = "1990")
-)
-with(
-  unique(station_coverage[station_coverage$year == 1991, c("station", "year", "annual_coverage")]),
-  barplot(annual_coverage, names.arg = station, las = 2, main = "1991")
-)
-```
-
-Note that missing years are not shown and that `year_coverage` only calculates the number of years that have been covered, not their internal coverage.
+Note that missing years are not shown and that `year_coverage` only calculates the number of years that have been covered.
+`period_coverage` calculates the coverage across the whole period, including missing years.
 
 ```{r plot-timeseries, echo=FALSE, fig.width=6, fig.height = 4}
-palette <- hcl.colors(length(unique(daily_ts$station)), "Roma")
-names(palette) <- unique(daily_ts$station)
-plot(
-  NULL, xlab = "", ylab = "Tmin",
-  xlim = range(daily_ts$date),
-  ylim = range(daily_ts$tmin, na.rm = TRUE),
-  axes = FALSE
-)
-axis(2, seq(-20, 20, by = 10))
-axis(
-  1,
-  seq(min(daily_ts$date), max(daily_ts$date), length.out = 2),
-  labels = c("1990", "1991")
-)
-for (s in unique(daily_ts$station)) {
-  with(
-    daily_ts[daily_ts$station == s, ],
-    lines(date, tmin, col = palette[s])
+palette <- hcl.colors(length(unique(daily_ts$station)), "Cork")
+with(
+  daily_ts,
+    interaction.plot(
+    date,
+    station,
+    tmin,
+    col = palette,
+    xlab = "Date",
+    ylab = "TMIN",
+    trace.label = "Station",
+    lty = 1
   )
-}
-legend(7300, 29, fill = palette, legend = names(palette), bg = adjustcolor("white", alpha.f = .75), cex = .6)
+)
 ```
 
 # Monthly and annual timeseries, climatological normals

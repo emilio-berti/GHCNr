@@ -7,9 +7,9 @@
 filter_stations(stations, roi)
 }
 \arguments{
-\item{stations, }{the table with station data.}
+\item{stations, }{the table with station data. See \code{\link[=stations]{stations()}}.}
 
-\item{roi, }{the geometry of the region of interest.}
+\item{roi, }{the geometry of the region of interest. See \code{\link[=get_country]{get_country()}}.}
 }
 \value{
 Table with filtered stations.

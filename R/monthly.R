@@ -8,7 +8,7 @@
 #'
 #' @export
 #'
-#' @param x Table of the daily timeseries.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #'
 #' @details
 #' \emph{x} is the table returned from \code{daily()} or 
@@ -34,7 +34,6 @@ monthly <- function(x) {
     summarize(
       tmin = .min(.data$tmin),
       tmax = .max(.data$tmax),
-      tavg = .mean(.data$tavg),
       prcp = .sum(.data$prcp),
       .groups = "drop"
     ) |>
@@ -44,12 +43,6 @@ monthly <- function(x) {
       month = as.numeric(.data$month)
     )
   
-  ans <- ans |> 
-    left_join(
-      coverage(x) |> select("station", "monthly_coverage", "year", "month"),
-      by = c("station", "year", "month")
-    )
-
   ans <- .s3_monthly(ans)
 
   return(ans)

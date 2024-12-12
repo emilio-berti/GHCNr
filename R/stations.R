@@ -1,6 +1,6 @@
 #' @title The GHCNd Inventory URL
 #' @export
-#' @return A string of the URL.
+#' @return The URL of the GHCNd inventory.
 .inventory_url <- function() {
   return("https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-inventory.txt")
 }
@@ -15,7 +15,7 @@
 #' @param filename Character of the filename of the inventory, if already downloaded.
 #' @param variables Character, vector of the variables to include.
 #'
-#' @return A tibble with the station inventory.
+#' @return The table with the GHCNd stations.
 #' 
 #' @details
 #' If \emph{filename} is not provided, this will download the inventory from
@@ -73,8 +73,8 @@ download_inventory <- function(filename) {
 #'
 #' @export
 #'
-#' @param stations, the table with station data.
-#' @param roi, the geometry of the region of interest.
+#' @param stations, the table with station data. See [stations()].
+#' @param roi, the geometry of the region of interest. See [get_country()].
 #'
 #' @return Table with filtered stations.
 #'

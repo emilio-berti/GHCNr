@@ -1,12 +1,12 @@
 #' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_daily.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
-#' @examples
 #' @return NULL, called for side effects.
+#' @examples
 #' plot(CA003076680, "tmax")
 plot.ghcn_daily <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_daily"))
@@ -53,14 +53,14 @@ plot.ghcn_daily <- function(x, variable, ...) {
 }
 
 #' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_monthly.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
-#' @examples
 #' @return NULL, called for side effects.
+#' @examples
 #' plot(monthly(CA003076680), "tmax")
 plot.ghcn_monthly <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_monthly"))
@@ -110,14 +110,14 @@ plot.ghcn_monthly <- function(x, variable, ...) {
 }
 
 #' @title Plot GHCN Timeseries
-#' @param x Object of class ghcn_annual.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to \code{plot()}.
 #' @importFrom grDevices hcl.colors
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
-#' @examples
 #' @return NULL, called for side effects.
+#' @examples
 #' plot(annual(CA003076680), "tmax")
 plot.ghcn_annual <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_annual"))

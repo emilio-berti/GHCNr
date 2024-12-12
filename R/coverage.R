@@ -8,7 +8,7 @@
 #'
 #' @export
 #'
-#' @param x Object of class `ghcn_daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #'
 #' @details Calculates the monthly coverage of one station.
 #'
@@ -33,7 +33,7 @@ monthly_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp", "tavg"),
+    	cols = c("tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -43,11 +43,11 @@ monthly_coverage <- function(x) {
     	coverage = sum(!is.na(.data$value)) / length(.data$value),
     	.groups = "drop"
     ) |> 
-    filter(!variable %in% missing_variables) |> 
+    filter(!.data$variable %in% missing_variables) |> 
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("monthly", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp", "tavg"))
+    	any_of(c("tmax", "tmin", "prcp"))
   )
   return (ans)
 }
@@ -62,7 +62,7 @@ monthly_coverage <- function(x) {
 #'
 #' @export
 #'
-#' @param x Object of class `ghcn_daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #'
 #' @details Calculates the annual coverage of one station.
 #'
@@ -87,7 +87,7 @@ annual_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp", "tavg"),
+    	cols = c("tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -97,11 +97,11 @@ annual_coverage <- function(x) {
     	coverage = sum(!is.na(.data$value)) / length(.data$value),
     	.groups = "drop"
     ) |> 
-    filter(!variable %in% missing_variables) |> 
+    filter(!.data$variable %in% missing_variables) |> 
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("annual", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp", "tavg"))
+    	any_of(c("tmax", "tmin", "prcp"))
   )
   return (ans)
 }
@@ -117,7 +117,7 @@ annual_coverage <- function(x) {
 #'
 #' @export
 #'
-#' @param x Object of class `ghcn_daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #'
 #' @details Calculates the period coverage of one station.
 #'
@@ -142,7 +142,7 @@ period_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp", "tavg"),
+    	cols = c("tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -152,18 +152,18 @@ period_coverage <- function(x) {
     	coverage = sum(!is.na(.data$value)) / length(.data$value),
     	.groups = "drop"
     ) |> 
-    filter(!variable %in% missing_variables) |> 
+    filter(!.data$variable %in% missing_variables) |> 
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("period", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp", "tavg"))
+    	any_of(c("tmax", "tmin", "prcp"))
   )
   return (ans)
 }
 
 #' @title Calculate Coverage of Daily Summaries
 #'
-#' @importFrom dplyr mutate group_by select distinct_all left_join bind_cols bind_rows
+#' @importFrom dplyr mutate group_by group_split select distinct_all left_join bind_cols bind_rows
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyselect contains
 #' @importFrom stats interaction.plot
@@ -172,7 +172,7 @@ period_coverage <- function(x) {
 #'
 #' @export
 #'
-#' @param x Object of class `ghcn_daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param graph Logical, if to show a graph of annual coverage.
 #'
 #' @details This function calculates the temporal coverage of stations.
@@ -190,7 +190,7 @@ period_coverage <- function(x) {
 #' cleaned <- remove_flagged(CA003076680)
 #' cover <- coverage(cleaned)
 #' cover[cover$month == 1, ]
-coverage <- function(x, graph) {
+coverage <- function(x, graph = FALSE) {
   stopifnot(inherits(x, "ghcn_daily"))
   .check_flags(x)
   x <- .drop_flags(x)
@@ -201,7 +201,7 @@ coverage <- function(x, graph) {
   	x_splitted <- x |> 
   	  group_by(.data$station) |> 
   	  group_split()
-  	ans <- lapply(x_splitted, \(x) x |> as_daily() |> coverage())
+  	ans <- lapply(x_splitted, \(x) x |> as_daily() |> coverage(graph = FALSE))
   	ans <- bind_rows(ans)
   	return(ans)
   }
@@ -233,7 +233,8 @@ coverage <- function(x, graph) {
   			xlab = "",
   			ylab = "Annual coverage",
   			xtick = TRUE,
-  			xpd = FALSE
+  			xpd = FALSE,
+  			main = ans$station[1]
   		)
   	)
   	grid()

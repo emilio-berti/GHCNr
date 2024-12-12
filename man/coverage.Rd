@@ -4,10 +4,10 @@
 \alias{coverage}
 \title{Calculate Coverage of Daily Summaries}
 \usage{
-coverage(x, graph)
+coverage(x, graph = FALSE)
 }
 \arguments{
-\item{x}{Object of class \code{ghcn_daily}.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 
 \item{graph}{Logical, if to show a graph of annual coverage.}
 }

@@ -8,11 +8,7 @@
 #'
 #' @export
 #'
-#' @param x Table of the daily timeseries.
-#'
-#' @details
-#' \emph{x} is the table returned from \code{get_ghcn_daily()} or 
-#' \code{remove_flagged()} or any subset of them.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #'
 #' @return A tibble with the annual timeseries at the stations.
 #' @examples
@@ -30,21 +26,12 @@ annual <- function(x) {
     summarize(
       tmin = .min(.data$tmin),
       tmax = .max(.data$tmax),
-      tavg = .mean(.data$tavg),
       prcp = .sum(.data$prcp),
       .groups = "drop"
     ) |>
     select(-all_of(missing_variable)) |> 
     mutate(year = as.numeric(.data$year))
   
-  ans <- ans |> 
-    left_join(
-      coverage(x) |> 
-        select("station", "annual_coverage", "year") |> 
-        distinct_all(),
-      by = c("station", "year")
-    )
-
   ans <- .s3_annual(ans)
   
   return(ans)

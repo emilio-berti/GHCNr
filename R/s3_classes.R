@@ -1,8 +1,8 @@
 #' @title Daily Class Constructor
 #' @export
 #' @param data A data frame or tibble to be used as the underlying data.
-#' @return An object of class `daily`.
-#' @details Creates a new object of class `daily`.
+#' @return An object of class `ghcn_daily`.
+#' @details Creates a new object of class `ghcn_daily`.
 .s3_daily <- function(data = tibble::tibble()) {
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")
@@ -35,11 +35,11 @@ as_daily <- function(data) {
   return(ans)
 }
 
-#' @title Daily Class Constructor
+#' @title Monthly Class Constructor
 #' @export
 #' @param data A data frame or tibble to be used as the underlying data.
-#' @return An object of class `monthly`.
-#' @details Creates a new object of class `monthly`.
+#' @return An object of class `ghcn_monthly`.
+#' @details Creates a new object of class `ghcn_monthly`.
 .s3_monthly <- function(data = tibble::tibble()) {
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")
@@ -48,11 +48,11 @@ as_daily <- function(data) {
   structure(data, class = c("ghcn_monthly", class(data)))
 }
 
-#' @title Daily Class Constructor
+#' @title Annual Class Constructor
 #' @export
 #' @param data A data frame or tibble to be used as the underlying data.
-#' @return An object of class `annual`.
-#' @details Creates a new object of class `annual`.
+#' @return An object of class `ghcn_annual`.
+#' @details Creates a new object of class `ghcn_annual`.
 .s3_annual <- function(data = tibble::tibble()) {
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")

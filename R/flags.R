@@ -44,7 +44,7 @@
 #' @importFrom tidyselect contains everything
 #' @importFrom tidyr drop_na
 #' @export
-#' @param x Object of class ghcn_daily.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @return The original objects without flags column.
 .drop_flags <- function(x) {
   stopifnot(inherits(x, "ghcn_daily"))
@@ -64,7 +64,7 @@
 #' @importFrom dplyr select distinct_all
 #' @importFrom tidyselect contains
 #' @export
-#' @param x Object of class ghcn_daily.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @return NULL, called for side effects
 .check_flags <- function(x) {
   stopifnot(inherits(x, "ghcn_daily"))

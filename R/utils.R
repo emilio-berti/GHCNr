@@ -24,7 +24,7 @@
 #' @title Add Columns to Handle Summarize
 #' @importFrom tibble tibble
 #' @export
-#' @param x Object of class `ghcn_daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @return Table with number of days in the months.
 .add_variables <- function(x) {
   stopifnot(inherits(x, "ghcn_daily") || inherits(x, "ghcn_monthly") || inherits(x, "ghcn_annual"))

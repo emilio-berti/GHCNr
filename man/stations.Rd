@@ -12,7 +12,7 @@ stations(filename, variables = c("tmin", "tmax", "prcp"))
 \item{variables}{Character, vector of the variables to include.}
 }
 \value{
-A tibble with the station inventory.
+The table with the GHCNd stations.
 }
 \description{
 Get GHCNd Inventory

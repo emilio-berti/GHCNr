@@ -142,12 +142,12 @@ daily <- function(
 #'
 #' @export
 #'
-#' @param x Object of class `daily`.
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param strict Logical, if to remove also `looser` flags.
 #'
 #' @details dates should be given in `YYYY-mm-dd` format.
 #'
-#' @return A tibble with the stations within the `roi`.
+#' @return `x` without flagged records.
 #'
 #' @examples
 #' remove_flagged(CA003076680)

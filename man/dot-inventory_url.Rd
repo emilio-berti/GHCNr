@@ -7,7 +7,7 @@
 .inventory_url()
 }
 \value{
-A string of the URL.
+The URL of the GHCNd inventory.
 }
 \description{
 The GHCNd Inventory URL

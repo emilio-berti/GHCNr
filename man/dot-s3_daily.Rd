@@ -10,11 +10,11 @@
 \item{data}{A data frame or tibble to be used as the underlying data.}
 }
 \value{
-An object of class \code{daily}.
+An object of class \code{ghcn_daily}.
 }
 \description{
 Daily Class Constructor
 }
 \details{
-Creates a new object of class \code{daily}.
+Creates a new object of class \code{ghcn_daily}.
 }

@@ -7,7 +7,7 @@
 \method{plot}{ghcn_annual}(x, variable, ...)
 }
 \arguments{
-\item{x}{Object of class ghcn_annual.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 
 \item{variable}{Name of the variable to plot.}
 
@@ -15,8 +15,10 @@
 }
 \value{
 NULL, called for side effects.
-plot(annual(CA003076680), "tmax")
 }
 \description{
 Plot GHCN Timeseries
+}
+\examples{
+plot(annual(CA003076680), "tmax")
 }

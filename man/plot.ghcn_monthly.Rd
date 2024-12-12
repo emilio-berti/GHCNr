@@ -7,7 +7,7 @@
 \method{plot}{ghcn_monthly}(x, variable, ...)
 }
 \arguments{
-\item{x}{Object of class ghcn_monthly.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 
 \item{variable}{Name of the variable to plot.}
 
@@ -15,8 +15,10 @@
 }
 \value{
 NULL, called for side effects.
-plot(monthly(CA003076680), "tmax")
 }
 \description{
 Plot GHCN Timeseries
+}
+\examples{
+plot(monthly(CA003076680), "tmax")
 }

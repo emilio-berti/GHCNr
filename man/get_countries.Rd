@@ -22,6 +22,6 @@ Download multiple countries' shapefiles from geoBoundaries
 }
 \examples{
 \dontrun{
-eu <- get_countries(europe_codes$iso3, simplified = TRUE)
+eu <- get_countries(country_code$iso3, simplified = TRUE)
 }
 }

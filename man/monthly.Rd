@@ -7,7 +7,7 @@
 monthly(x)
 }
 \arguments{
-\item{x}{Table of the daily timeseries.}
+\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 }
 \value{
 A tibble with the monthly timeseries at the stations.

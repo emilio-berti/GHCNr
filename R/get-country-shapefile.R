@@ -55,7 +55,7 @@ get_country <- function(
 #'
 #' @examples
 #' \dontrun{
-#' eu <- get_countries(europe_codes$iso3, simplified = TRUE)
+#' eu <- get_countries(country_code$iso3, simplified = TRUE)
 #' }
 get_countries <- function(
   countries_code,

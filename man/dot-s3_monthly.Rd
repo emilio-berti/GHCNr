@@ -2,7 +2,7 @@
 % Please edit documentation in R/s3_classes.R
 \name{.s3_monthly}
 \alias{.s3_monthly}
-\title{Daily Class Constructor}
+\title{Monthly Class Constructor}
 \usage{
 .s3_monthly(data = tibble::tibble())
 }
@@ -10,11 +10,11 @@
 \item{data}{A data frame or tibble to be used as the underlying data.}
 }
 \value{
-An object of class \code{monthly}.
+An object of class \code{ghcn_monthly}.
 }
 \description{
-Daily Class Constructor
+Monthly Class Constructor
 }
 \details{
-Creates a new object of class \code{monthly}.
+Creates a new object of class \code{ghcn_monthly}.
 }
