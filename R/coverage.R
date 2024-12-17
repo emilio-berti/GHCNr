@@ -183,7 +183,7 @@ period_coverage <- function(x) {
 #'  \item annual_coverage The proportion of the days with records in the year
 #'  \item annual_coverage The proportion of the years with records in the reference period
 #' }
-#' Important: that 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1', 
+#' Important: 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1', 
 #' but rather that all years have at least one record.
 #'
 #' @return A table with coverage.

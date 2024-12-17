@@ -7,6 +7,11 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r, include=FALSE}
+library(httptest2)
+start_vignette("daily")
+```
+
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
@@ -27,11 +32,11 @@ The inventory can also be downloaded to a file using `download_inventory()`.
 
 ```{r download-inventory, eval=FALSE}
 inventory_file <- download_inventory("~/Downloads/ghcn-inventory.txt")
-stations <- stations(inventory_file, variables = "TMAX")
+s <- stations(inventory_file, variables = "TMAX")
 ```
 
 ```{r read-inventory}
-stations <- stations(variables = "TMAX")
+s <- stations(variables = "TMAX")
 ```
 
 By specifying `variables = "TMAX"` only the stations that recorded that variable are kept.
@@ -39,9 +44,9 @@ Available variables implemented at the moment are precipitation ("PRCP"), minimu
 
 Stations spanning a time range can be filtered easily.
 ```{r filter-by-year}
-stations <- stations[stations$startYear <= 1990, ]
-stations <- stations[stations$endYear >= 2000, ]
-stations
+s <- s[s$startYear <= 1990, ]
+s <- s[s$endYear >= 2000, ]
+s
 ```
 
 Spatial filters can also be easily applied.
@@ -53,9 +58,9 @@ italy <- get_country("ITA")
 `get_countries()` can take several ISO3 codes to return a geometry of multiple countries.
 
 ```{r spatial-filter}
-stations <- filter_stations(stations, italy)
+s <- filter_stations(s, italy)
 plot(italy)
-points(stations[, c("longitude", "latitude")], pch = 20, col = "dodgerblue")
+points(s[, c("longitude", "latitude")], pch = 20, col = "dodgerblue")
 ```
 
 # Download daily timeseries
@@ -66,9 +71,9 @@ These should be provided as strings with the format "YYYY-mm-dd", e.g., "1990-01
 
 ```{r daily}
 daily_ts <- daily(
-  stations$station[1],
-  paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
-  paste(stations$endYear[1], "12", "21", sep = "-"),
+  station_id = s$station[1],
+  start_date = paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
+  end_date = paste(s$endYear[1], "12", "21", sep = "-"),
   variables = "tmin"
 )
 daily_ts
@@ -78,7 +83,7 @@ Multiple stations can also be downloaded at once.
 Too many stations will cause the API to fail.
 ```{r multidaily}
 daily_ts <- daily(
-  stations$station,
+  s$station,
   paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
   paste("1991", "12", "31", sep = "-"),  # shorten a bit as example
   variables = "tmin"
@@ -167,4 +172,8 @@ annual_ts <- annual(daily_ts)
 annual_ts
 plot(annual_ts, "tmin")
 # normals <- normal(daily_ts) # to be implemented
+```
+
+```{r, include=FALSE}
+end_vignette()
 ```
