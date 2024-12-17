@@ -8,7 +8,7 @@
   status_code <- resp |> resp_status()
   message(
     paste(
-      "API error:",
+      "API error",
       status_code,
       resp |> resp_status_desc()
     )

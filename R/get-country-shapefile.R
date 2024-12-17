@@ -1,6 +1,6 @@
 #' @title Download country shapefile from geoBoundaries
 #'
-#' @importFrom httr2 request req_perform resp_body_json
+#' @importFrom httr2 request req_user_agent req_perform resp_body_json last_response resp_status
 #' @importFrom terra vect
 #'
 #' @export
@@ -29,15 +29,32 @@ get_country <- function(
     "ADM0",
     sep = "/"
   )
-  response <- url |>
+  req <- url |>
     request() |>
-    req_perform() |>
-    resp_body_json()
+    req_user_agent("GHCNr (https://cran.r-project.org/package=GHCNr)")
+
+  # try to get response and handle errors
+  resp <- tryCatch(
+    req |> req_perform() |> resp_body_json(),
+    error = function(e) NULL
+  )
+
+  # API error
+  if (is.null(resp)) {
+    .api_error(last_response())
+  }
+
+  # no error, but no data found
+  if (length(resp) == 0 && (last_response() |> resp_status() < 400)) {
+    stop("No data found.")
+  }
+
+  stopifnot(!is.null(resp))
 
   if (simplified) {
-    ans <- vect(response$simplifiedGeometryGeoJSON)
+    ans <- vect(resp$simplifiedGeometryGeoJSON)
   } else {
-    ans <- vect(response$gjDownloadURL)
+    ans <- vect(resp$gjDownloadURL)
   }
 
   return(ans)

@@ -66,7 +66,10 @@
   )
 
   # API error
-  if (is.null(resp)) .api_error(last_response())  
+  if (is.null(resp)) {
+    .api_error(last_response())
+    return(NULL)
+  }
 
   # no error, but no data found
   if (length(resp) == 0 && (last_response() |> resp_status() < 400)) {
