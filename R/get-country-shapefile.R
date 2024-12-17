@@ -20,6 +20,9 @@ get_country <- function(
   simplified = TRUE
 ) {
   stopifnot(nchar(country_code) == 3)
+  if (length(country_code) > 1) {
+    stop("Too many country codes. Use country_codes() for multiple countries.")
+  }
   url <- paste(
     "https://www.geoboundaries.org/api/current/gbOpen",
     country_code,

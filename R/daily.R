@@ -1,7 +1,5 @@
 #' @title Create Request URL for Daily Summaries
 #'
-#' @export
-#'
 #' @param station_id Character, station id(s).
 #' @param start_date Character, start date.
 #' @param end_date Character, end date.
@@ -19,22 +17,22 @@
   variables
 ) {
   if (nchar(strsplit(start_date, "-")[[1]][1]) < 4) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(start_date, "-")[[1]][2]) > 12) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(start_date, "-")[[1]][3]) > 31) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
   if (nchar(strsplit(end_date, "-")[[1]][1]) < 4) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(end_date, "-")[[1]][2]) > 12) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(end_date, "-")[[1]][3]) > 31) {
-    warning("   date format should be YYYY-MM-DD")
+    warning("Date format should be YYYY-MM-DD")
   }
 
   if (length(station_id) > 1) station_id <- paste(station_id, collapse = ",")
@@ -53,22 +51,30 @@
 }
 
 #' @title Request Daily Summaries
-#' @importFrom httr2 request req_perform resp_body_json
-#' @export
+#' @importFrom httr2 request req_user_agent req_perform resp_body_json last_response resp_status
 #' @param url Character, URL of the request.
 #' @return Body of the JSON request.
 .daily_request <- function(url) {
-  url <- 
-  req <- request(url)
-  req <- req_perform(req)
-  body <- resp_body_json(req)
+  req <- url |>
+    request() |>
+    req_user_agent("GHCNr (https://cran.r-project.org/package=GHCNr)")
 
-  if (length(body) == 0) {
-    stop("No data found")
+  # try to get response and handle errors
+  resp <- tryCatch(
+    req |> req_perform() |> resp_body_json(),
+    error = function(e) NULL
+  )
+
+  # API error
+  if (is.null(resp)) .api_error(last_response())  
+
+  # no error, but no data found
+  if (length(resp) == 0 && (last_response() |> resp_status() < 400)) {
+    message("No data found.")
+    return(NULL)
   }
 
-  return(body)
-
+  return(resp)
 }
 
 #' @title Download Daily Summaries
@@ -110,6 +116,7 @@ daily <- function(
     variables
   )
   body <- .daily_request(url)
+  stopifnot(!is.null(body))
 
   daily_data <- body |> 
     bind_rows() |>
@@ -145,13 +152,11 @@ daily <- function(
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param strict Logical, if to remove also `looser` flags.
 #'
-#' @details dates should be given in `YYYY-mm-dd` format.
-#'
 #' @return `x` without flagged records.
 #'
 #' @examples
 #' remove_flagged(CA003076680)
-remove_flagged <- function(x, strict = FALSE) {
+remove_flagged <- function(x, strict = TRUE) {
   stopifnot(inherits(x, "ghcn_daily"))
 
   flagged <- matrix(

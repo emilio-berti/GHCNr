@@ -74,8 +74,8 @@
       distinct_all() |> 
       unlist() |> 
       unique()
-    if (any(colnames(GHCNr::.flags(strict = TRUE)) %in% flagged)) {
-      warning("Flags found, considering dropping flagged records. See ?remove_flagged() for details.")
+    if (any(colnames(.flags(strict = TRUE)) %in% flagged)) {
+      warning("Flags found, considering dropping flagged records. See ?remove_flagged for details.")
     }
   }
 }

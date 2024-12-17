@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{.missing_variables}
 \alias{.missing_variables}
-\title{Check Ahich Variables Are Absent}
+\title{Check Which Variables Are Absent}
 \usage{
 .missing_variables(x)
 }
@@ -13,5 +13,5 @@
 Character vector
 }
 \description{
-Check Ahich Variables Are Absent
+Check Which Variables Are Absent
 }

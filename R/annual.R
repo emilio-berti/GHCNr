@@ -16,6 +16,7 @@
 annual <- function(x) {
   stopifnot(inherits(x, "ghcn_daily"))
 
+  .check_flags(x)
   x <- .drop_flags(x)
   missing_variable <- .missing_variables(x)
   x <- .add_variables(x)

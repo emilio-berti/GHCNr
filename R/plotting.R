@@ -34,8 +34,8 @@ plot.ghcn_daily <- function(x, variable, ...) {
   )
   axis.Date(
     1,
-    at = seq(min(x$date), max(x$date) + 180, by = 90),
-    format = "%Y-%m-%d",
+    at = seq(min(x$date), max(x$date), by = "year"),
+    format = "%Y",
     las = 2
   )
   yrange <- range(x[[variable]], na.rm = TRUE)
@@ -90,8 +90,8 @@ plot.ghcn_monthly <- function(x, variable, ...) {
   )
   axis.Date(
     1,
-    at = seq(min(x$date), max(x$date) + 180, by = 90),
-    format = "%Y-%m-%d",
+    at = seq(min(x$date), max(x$date), by = "year"),
+    format = "%Y",
     las = 2
   )
   yrange <- range(x[[variable]], na.rm = TRUE)

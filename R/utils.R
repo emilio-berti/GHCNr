@@ -1,4 +1,27 @@
-#' @title Check Ahich Variables Are Absent 
+#' @title Handles API Errors
+#' @importFrom httr2 resp_status resp_status_desc
+#' @export
+#' @param resp Object of class `httr2_response`.
+#' @return NULL, called for side effects.
+.api_error <- function(resp) {
+  stopifnot(inherits(resp, "httr2_response"))
+  status_code <- resp |> resp_status()
+  message(
+    paste(
+      "API error:",
+      status_code,
+      resp |> resp_status_desc()
+    )
+  )
+  if (status_code == 414) {
+    message("URI is too long. Try asking for data from fewer stations.")
+  }
+  if (status_code == 408 || status_code >= 500) {
+    message("Retry in few moments.")
+  }
+}
+
+#' @title Check Which Variables Are Absent 
 #' @importFrom tibble tibble
 #' @export
 #' @param x Object of class `ghcn_daily`.

@@ -4,7 +4,7 @@
 \alias{remove_flagged}
 \title{Remove Flagged Recrods}
 \usage{
-remove_flagged(x, strict = FALSE)
+remove_flagged(x, strict = TRUE)
 }
 \arguments{
 \item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
@@ -16,9 +16,6 @@ remove_flagged(x, strict = FALSE)
 }
 \description{
 Remove Flagged Recrods
-}
-\details{
-dates should be given in \code{YYYY-mm-dd} format.
 }
 \examples{
 remove_flagged(CA003076680)

@@ -4,12 +4,21 @@
 \alias{stations}
 \title{Get GHCNd Inventory}
 \usage{
-stations(filename, variables = c("tmin", "tmax", "prcp"))
+stations(
+  filename,
+  variables = c("tmin", "tmax", "prcp"),
+  first_year,
+  last_year
+)
 }
 \arguments{
-\item{filename}{Character of the filename of the inventory, if already downloaded.}
+\item{filename}{Character, the filename of the inventory, if already downloaded.}
 
 \item{variables}{Character, vector of the variables to include.}
+
+\item{first_year}{Integer, the year since when data should be recorded.}
+
+\item{last_year}{Integer, the year until when data should be recorded.}
 }
 \value{
 The table with the GHCNd stations.
