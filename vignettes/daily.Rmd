@@ -8,11 +8,13 @@ vignette: >
 ---
 
 ```{r, include=FALSE}
+library(dplyr)
+library(jsonlite)
 library(httptest2)
 start_vignette("daily")
 ```
 
-```{r, include = FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -109,9 +111,9 @@ daily_ts <- daily(
 ```{r daily-saved, echo=FALSE}
 saved_api_call <- "/home/squirry/GHCNr/vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-1c6ea3.json"
 daily_ts <- saved_api_call |> 
-  jsonlite::read_json() |> 
-  dplyr::bind_rows() |> 
-  dplyr::rename_with( ~tolower(.x), dplyr::everything()) |> 
+  read_json() |> 
+  bind_rows() |> 
+  rename_with( ~tolower(.x), everything()) |> 
   as_daily()
 daily_ts
 ```
@@ -126,12 +128,12 @@ daily_ts <- daily(
   variables = "tmax"
 )
 ```
-```{r mltidaily-saved, echo=FALSE}
+```{r multidaily-saved, echo=FALSE}
 saved_api_call <- "/home/squirry/GHCNr/vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-c8c863.json"
 daily_ts <- saved_api_call |> 
-  jsonlite::read_json() |> 
-  dplyr::bind_rows() |> 
-  dplyr::rename_with( ~tolower(.x), dplyr::everything()) |> 
+  read_json() |> 
+  bind_rows() |> 
+  rename_with( ~tolower(.x), everything()) |> 
   as_daily()
 daily_ts
 plot(daily_ts, "tmax")
@@ -145,14 +147,14 @@ Implmented variables are "tmin", "tmax", and "prcp".
 ## Remove flagged records
 
 Flagged records can be removed using `remove_flagged()`.
-In `remove_flagged()` the argument `strict` (dafault = `FALSE`) specifies which flags to include.
-Flags always removed are:
+In `remove_flagged()` the argument `strict` (dafault = `TRUE`) specifies which flags to include.
+The flags removed are:
 ```{r flags, echo=FALSE}
-as.list(GHCNr:::.flags(strict = FALSE))
+as.list(GHCNr:::.flags(strict = TRUE))
 ```
-Whereas setting `strict = TRUE` will cause additional flags to be removed.
+Setting `strict = FALSE` will only remove the flags:
 ```{r flags-strict, echo=FALSE}
-setdiff(GHCNr:::.flags(strict = TRUE), GHCNr:::.flags(strict = FALSE))
+as.list(GHCNr:::.flags(strict = FALSE))
 ```
 
 This will also remove the "*_flag=" column.
