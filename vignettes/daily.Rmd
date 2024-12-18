@@ -98,25 +98,41 @@ Daily timeseries for a station can be downloaded using the `daily()` function.
 In addition to the station ID, `daily()` needs start and end dates of the timeseries.
 These should be provided as strings with the format "YYYY-mm-dd", e.g., "1990-01-01".
 
-```{r daily}
+```{r daily, eval=FALSE}
 daily_ts <- daily(
   station_id = "IT000016134",
   start_date = paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
   end_date = paste("2024", "12", "21", sep = "-"),
   variables = "tmax"
 )
+```
+```{r daily-saved, echo=FALSE}
+saved_api_call <- "/home/squirry/GHCNr/vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-1c6ea3.json"
+daily_ts <- saved_api_call |> 
+  jsonlite::read_json() |> 
+  dplyr::bind_rows() |> 
+  dplyr::rename_with( ~tolower(.x), dplyr::everything()) |> 
+  as_daily()
 daily_ts
 ```
 
 Multiple stations can also be downloaded at once.
 Too many stations will cause the API to fail.
-```{r multidaily}
+```{r multidaily, eval=FALSE}
 daily_ts <- daily(
   c("IT000016134", "IT000016232", "IT000016239", "IT000016320"), 
   paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
   paste("1991", "12", "31", sep = "-"),  # shorten a bit as example
   variables = "tmax"
 )
+```
+```{r mltidaily-saved, echo=FALSE}
+saved_api_call <- "/home/squirry/GHCNr/vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-c8c863.json"
+daily_ts <- saved_api_call |> 
+  jsonlite::read_json() |> 
+  dplyr::bind_rows() |> 
+  dplyr::rename_with( ~tolower(.x), dplyr::everything()) |> 
+  as_daily()
 daily_ts
 plot(daily_ts, "tmax")
 ```

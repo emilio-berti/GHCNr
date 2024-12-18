@@ -13,11 +13,12 @@
 
 #' @title Cast Table to Daily
 #' @importFrom tibble as_tibble
-#' @importFrom dplyr mutate select
+#' @importFrom dplyr mutate select across
+#' @importFrom tidyselect any_of
 #' @importFrom rlang .data
 #' @export
 #' @param data A data frame or tibble to be used as the underlying data.
-#' @return An object of class `daily`.
+#' @return An object of class `ghcn_daily`.
 #' @examples
 #' \dontrun{
 #' df <- read.csv(...)
@@ -30,7 +31,10 @@ as_daily <- function(data) {
   stopifnot(inherits(data, "data.frame"))
   ans <- data |>
     as_tibble() |>
-    mutate(date = as.Date(.data$date, "%Y-%m-%d"))
+    mutate(
+      date = as.Date(.data$date, "%Y-%m-%d"),
+      across(any_of(c("tmax", "tmin", "prcp")), ~.as.numeric(.x))
+    )
   ans <- .s3_daily(ans)
   return(ans)
 }
