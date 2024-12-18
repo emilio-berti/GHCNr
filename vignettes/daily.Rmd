@@ -8,13 +8,6 @@ vignette: >
 ---
 
 ```{r, include=FALSE}
-library(dplyr)
-library(jsonlite)
-library(httptest2)
-start_vignette("daily")
-```
-
-```{r, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -102,19 +95,15 @@ These should be provided as strings with the format "YYYY-mm-dd", e.g., "1990-01
 
 ```{r daily, eval=FALSE}
 daily_ts <- daily(
-  station_id = "IT000016134",
-  start_date = paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
-  end_date = paste("2024", "12", "21", sep = "-"),
+  station_id = "CA003076680",
+  start_date = paste("2002", "11", "01", sep = "-"),
+  end_date = paste("2024", "04", "22", sep = "-"),
   variables = "tmax"
 )
+daily_ts
 ```
 ```{r daily-saved, echo=FALSE}
-saved_api_call <- "vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-1c6ea3.json"
-daily_ts <- saved_api_call |> 
-  read_json() |> 
-  bind_rows() |> 
-  rename_with( ~tolower(.x), everything()) |> 
-  as_daily()
+daily_ts <- CA003076680[, c("date", "station", "tmax", "tmax_flag")]
 daily_ts
 ```
 
@@ -122,24 +111,17 @@ Multiple stations can also be downloaded at once.
 Too many stations will cause the API to fail.
 ```{r multidaily, eval=FALSE}
 daily_ts <- daily(
-  c("IT000016134", "IT000016232", "IT000016239", "IT000016320"), 
-  paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
-  paste("1991", "12", "31", sep = "-"),  # shorten a bit as example
+  station_id = c("CA003076680", "USC00010655"),
+  start_date = paste("2002", "11", "01", sep = "-"),
+  end_date = paste("2024", "04", "22", sep = "-"),
   variables = "tmax"
 )
-```
-```{r multidaily-saved, echo=FALSE}
-saved_api_call <- "vignettes/daily/0/www.ncei.noaa.gov/access/services/data/v1-c8c863.json"
-daily_ts <- saved_api_call |> 
-  read_json() |> 
-  bind_rows() |> 
-  rename_with( ~tolower(.x), everything()) |> 
-  as_daily()
-daily_ts
 plot(daily_ts, "tmax")
 ```
-
-Note the outliers, which are due to flagged records (see below).
+```{r multidaily-saved, echo=FALSE}
+daily_ts <- rbind(CA003076680, USC00010655)[, c("date", "station", "tmax", "tmax_flag")]
+plot(daily_ts, "tmax")
+```
 
 Implmented variables are "tmin", "tmax", and "prcp".
 `daily()` returns a table with the value of the variable chosen and associated flags.
@@ -175,24 +157,10 @@ The output is a table with coverage by month and year (`monthly_coverage`), by y
 `annual_coverage` is constant within the same year and `year` is always a constant.
 This table is useful to inspect stations that may have problematic timeseries, such as 
 ```{r low-coverage}
-unique(station_coverage[, c("station", "year", "annual_coverage_tmax", "period_coverage_tmax")])
-```
-
-```{r plot-timeseries, echo=FALSE, fig.width=6, fig.height = 4}
-palette <- hcl.colors(length(unique(daily_ts$station)), "Roma")
-with(
-  daily_ts,
-    interaction.plot(
-    date,
-    station,
-    tmax,
-    col = palette,
-    xlab = "Date",
-    ylab = "TMAX",
-    trace.label = "Station",
-    lty = 1
-  )
-)
+unique(station_coverage[
+  station_coverage$annual_coverage_tmax < .95,
+  c("station", "year", "annual_coverage_tmax")
+])
 ```
 
 # Monthly and annual timeseries, climatological normals
@@ -217,9 +185,4 @@ plot(monthly_ts, "tmax")
 annual_ts <- annual(daily_ts)
 annual_ts
 plot(annual_ts, "tmax")
-# normals <- normal(daily_ts) # to be implemented
-```
-
-```{r, include=FALSE}
-end_vignette()
 ```
