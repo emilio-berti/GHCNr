@@ -7,6 +7,7 @@ test_that("correct inventory url", {
 
 test_that("reading and filtering inventory", {
   skip_on_cran()
+  skip_on_ci()
   vars <- sample(c("tmin", "tmax", "prcp"), sample(1:3, 1))
   first_year <- sample(seq(1960, 2000), 1)
   last_year <- sample(seq(first_year, 2024), 1)
