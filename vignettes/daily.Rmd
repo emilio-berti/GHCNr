@@ -35,7 +35,7 @@ inventory_file <- download_inventory("~/Downloads/ghcn-inventory.txt")
 s <- stations(inventory_file, variables = "TMAX")
 ```
 
-```{r read-inventory}
+```{r read-inventory, eval=FALSE}
 s <- stations(variables = "TMAX")
 ```
 
@@ -43,24 +43,53 @@ By specifying `variables = "TMAX"` only the stations that recorded that variable
 Available variables implemented at the moment are precipitation ("PRCP"), minimum temperature ("TMIN"), and maximum temperature ("TMAX").
 
 Stations spanning a time range can be filtered easily.
-```{r filter-by-year}
+```{r filter-by-year, eval=FALSE}
 s <- s[s$startYear <= 1990, ]
 s <- s[s$endYear >= 2000, ]
 s
+# A tibble: 16,763 × 6
+   station     latitude longitude variable startYear endYear
+   <chr>          <dbl>     <dbl> <chr>        <dbl>   <dbl>
+ 1 AE000041196     25.3     55.5  TMAX          1944    2024
+ 2 AEM00041194     25.3     55.4  TMAX          1983    2024
+ 3 AEM00041217     24.4     54.7  TMAX          1983    2024
+ 4 AFM00040938     34.2     62.2  TMAX          1973    2020
+ 5 AFM00040948     34.6     69.2  TMAX          1966    2021
+ 6 AFM00040990     31.5     65.8  TMAX          1973    2020
+ 7 AG000060390     36.7      3.25 TMAX          1940    2024
+ 8 AG000060590     30.6      2.87 TMAX          1940    2024
+ 9 AG000060611     28.0      9.63 TMAX          1958    2024
+10 AG000060680     22.8      5.43 TMAX          1940    2004
+# ℹ 16,753 more rows
+# ℹ Use `print(n = ...)` to see more rows
 ```
 
 Spatial filters can also be easily applied.
 Spatial boundaries of countries can be downloaded from <https://www.geoboundaries.org/> using the `get_countr(couuntry_code = ...)` function, where `country_code` is the ISO3 code.
-```{r get-country}
+```{r get-country, eval=FALSE}
 italy <- get_country("ITA")
 ```
 
 `get_countries()` can take several ISO3 codes to return a geometry of multiple countries.
 
-```{r spatial-filter}
+```{r spatial-filter, eval=FALSE}
 s <- filter_stations(s, italy)
-plot(italy)
-points(s[, c("longitude", "latitude")], pch = 20, col = "dodgerblue")
+s
+# A tibble: 41 × 6
+   station     latitude longitude variable startYear endYear
+   <chr>          <dbl>     <dbl> <chr>        <dbl>   <dbl>
+ 1 IT000016090     45.4     10.9  TMAX          1951    2024
+ 2 IT000016134     44.2     10.7  TMAX          1951    2024
+ 3 IT000016232     42       15    TMAX          1975    2024
+ 4 IT000016239     41.8     12.6  TMAX          1951    2024
+ 5 IT000016320     40.6     17.9  TMAX          1951    2024
+ 6 IT000016560     39.2      9.05 TMAX          1951    2024
+ 7 IT000160220     46.2     11.0  TMAX          1951    2024
+ 8 IT000162240     42.1     12.2  TMAX          1954    2024
+ 9 IT000162580     41.7     16.0  TMAX          1951    2024
+10 ITE00100554     45.5      9.19 TMAX          1763    2008
+# ℹ 31 more rows
+# ℹ Use `print(n = ...)` to see more rows
 ```
 
 # Download daily timeseries
@@ -71,10 +100,10 @@ These should be provided as strings with the format "YYYY-mm-dd", e.g., "1990-01
 
 ```{r daily}
 daily_ts <- daily(
-  station_id = s$station[1],
+  station_id = "IT000016134",
   start_date = paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
-  end_date = paste(s$endYear[1], "12", "21", sep = "-"),
-  variables = "tmin"
+  end_date = paste("2024", "12", "21", sep = "-"),
+  variables = "tmax"
 )
 daily_ts
 ```
@@ -83,13 +112,13 @@ Multiple stations can also be downloaded at once.
 Too many stations will cause the API to fail.
 ```{r multidaily}
 daily_ts <- daily(
-  s$station,
+  c("IT000016134", "IT000016232", "IT000016239", "IT000016320"), 
   paste("1990", "01", "01", sep = "-"),  # shorten a bit as example
   paste("1991", "12", "31", sep = "-"),  # shorten a bit as example
-  variables = "tmin"
+  variables = "tmax"
 )
 daily_ts
-plot(daily_ts, "tmin")
+plot(daily_ts, "tmax")
 ```
 
 Note the outliers, which are due to flagged records (see below).
@@ -113,36 +142,35 @@ setdiff(GHCNr:::.flags(strict = TRUE), GHCNr:::.flags(strict = FALSE))
 This will also remove the "*_flag=" column.
 ```{r remove-flagged}
 daily_ts <- remove_flagged(daily_ts)
-plot(daily_ts, "tmin")
+plot(daily_ts, "tmax")
 ```
 
 # Temporal coverage
 Coverage of the timeseries can be calculated using `coverage()`.
 ```{r daily-coverage}
 station_coverage <- coverage(daily_ts)
+station_coverage
 ```
+`period_coverage` calculates the coverage across the whole period, including missing years.
 
 The output is a table with coverage by month and year (`monthly_coverage`), by year (`annual_coverage`), and for the whole time period (`period_coverage`).
 `annual_coverage` is constant within the same year and `year` is always a constant.
 This table is useful to inspect stations that may have problematic timeseries, such as 
 ```{r low-coverage}
-station_coverage[station_coverage$annual_coverage_tmin < 0.5, ]
+unique(station_coverage[, c("station", "year", "annual_coverage_tmax", "period_coverage_tmax")])
 ```
 
-Note that missing years are not shown and that `year_coverage` only calculates the number of years that have been covered.
-`period_coverage` calculates the coverage across the whole period, including missing years.
-
 ```{r plot-timeseries, echo=FALSE, fig.width=6, fig.height = 4}
-palette <- hcl.colors(length(unique(daily_ts$station)), "Cork")
+palette <- hcl.colors(length(unique(daily_ts$station)), "Roma")
 with(
   daily_ts,
     interaction.plot(
     date,
     station,
-    tmin,
+    tmax,
     col = palette,
     xlab = "Date",
-    ylab = "TMIN",
+    ylab = "TMAX",
     trace.label = "Station",
     lty = 1
   )
@@ -164,13 +192,13 @@ Summaries are calculated as follows:
 ```{r monthly}
 monthly_ts <- monthly(daily_ts)
 monthly_ts
-plot(monthly_ts, "tmin")
+plot(monthly_ts, "tmax")
 ```
 
 ```{r annual}
 annual_ts <- annual(daily_ts)
 annual_ts
-plot(annual_ts, "tmin")
+plot(annual_ts, "tmax")
 # normals <- normal(daily_ts) # to be implemented
 ```
 
