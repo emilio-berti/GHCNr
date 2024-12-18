@@ -33,7 +33,7 @@ as_daily <- function(data) {
     as_tibble() |>
     mutate(
       date = as.Date(.data$date, "%Y-%m-%d"),
-      across(any_of(c("tmax", "tmin", "prcp")), ~.as.numeric(.x))
+      across(any_of(c("tmax", "tmin", "prcp")), ~as.numeric(.x))
     )
   ans <- .s3_daily(ans)
   return(ans)
