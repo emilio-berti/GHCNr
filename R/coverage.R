@@ -1,23 +1,33 @@
 #' @title Calculate Monthly Coverage
 #'
+#' @description
+#' `monthly_coverage()` calculates how many days have been recorded for 
+#' each month in the time period.
+#'
+#' @details
+#' To calculate the coverage, a full daily time range is full joined to the
+#' timeseries. Missing days are set to NA. Coverage is then calculated as
+#' the number of values that are not NAs over the number of NAs.
+#'
 #' @importFrom dplyr mutate group_by full_join
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tidyselect any_of
 #' @importFrom tibble tibble
 #' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
+#' @return A table with mothly coverage.
 #'
-#' @details Calculates the monthly coverage of one station.
-#'
-#' @return A table with mothly coverages.
 #' @examples
 #' cleaned <- remove_flagged(CA003076680)
 #' cover <- monthly_coverage(cleaned)
 #' cover[cover$year == 2020, ]
 monthly_coverage <- function(x) {
+  stopifnot(inherits(x, "ghcn_daily"))
+  .check_flags(x)
+  x <- .drop_flags(x)
+
 	timespan <- seq.Date(min(x$date), max(x$date), by = "day")
 
 	x <- tibble(date = timespan) |> 
@@ -54,25 +64,35 @@ monthly_coverage <- function(x) {
 
 #' @title Calculate Annual Coverage
 #'
+#' @description
+#' `annual_coverage()` calculates how many days have been recorded for 
+#' each year in the time period.
+#'
+#' @details
+#' To calculate the coverage, a full daily time range is full joined to the
+#' timeseries. Missing days are set to NA. Coverage is then calculated as
+#' the number of values that are not NAs over the number of NAs.
+#'
 #' @importFrom dplyr mutate group_by full_join
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tidyselect any_of
 #' @importFrom tibble tibble
 #' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
-#'
-#' @details Calculates the annual coverage of one station.
-#'
 #' @return A table with annual coverage.
+#'
 #' @examples
 #' cleaned <- remove_flagged(CA003076680)
 #' cover <- annual_coverage(cleaned)
 #' cover
 annual_coverage <- function(x) {
-	timespan <- seq.Date(min(x$date), max(x$date), by = "day")
+	stopifnot(inherits(x, "ghcn_daily"))
+  .check_flags(x)
+  x <- .drop_flags(x)
+
+  timespan <- seq.Date(min(x$date), max(x$date), by = "day")
 
 	x <- tibble(date = timespan) |> 
 		full_join(x, by = "date", multiple = "all") |> 
@@ -106,28 +126,39 @@ annual_coverage <- function(x) {
   return (ans)
 }
 
-
 #' @title Calculate Period Coverage
+#'
+#' @description
+#' `period_coverage()` calculates how many days have been recorded for 
+#' the whole time period.
+#'
+#' @details
+#' To calculate the coverage, a full daily time range is full joined to the
+#' timeseries. Missing days are set to NA. Coverage is then calculated as
+#' the number of values that are not NAs over the number of NAs.
+#' Period coverage is a constant value for each station in the `ghcn_daily`
+#' object.
 #'
 #' @importFrom dplyr mutate group_by full_join
 #' @importFrom tidyr pivot_longer pivot_wider
 #' @importFrom tidyselect any_of
 #' @importFrom tibble tibble
 #' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
+#' @return A table with period coverage.
 #'
-#' @details Calculates the period coverage of one station.
-#'
-#' @return A table with coverage across the period.
 #' @examples
 #' cleaned <- remove_flagged(CA003076680)
 #' cover <- period_coverage(cleaned)
 #' cover
 period_coverage <- function(x) {
-	timespan <- seq.Date(min(x$date), max(x$date), by = "day")
+	stopifnot(inherits(x, "ghcn_daily"))
+  .check_flags(x)
+  x <- .drop_flags(x)
+
+  timespan <- seq.Date(min(x$date), max(x$date), by = "day")
 
 	x <- tibble(date = timespan) |> 
 		full_join(x, by = "date", multiple = "all") |> 
@@ -163,6 +194,18 @@ period_coverage <- function(x) {
 
 #' @title Calculate Coverage of Daily Summaries
 #'
+#' @description
+#' `coverage()` calculates the temporal coverage of the time series.
+#' See also [monthly_coverage()], [annual_coverage()], and [period_coverage()].
+#'
+#' @details 
+#' Returns a table with:
+#' \itemize{
+#'  \item mothly_coverage The proportion of the days with records in the month
+#'  \item annual_coverage The proportion of the days with records in the year
+#'  \item annual_coverage The proportion of the years with records in the reference period
+#' }
+#'
 #' @importFrom dplyr mutate group_by group_split select distinct_all left_join bind_cols bind_rows
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer
@@ -170,21 +213,10 @@ period_coverage <- function(x) {
 #' @importFrom stats interaction.plot
 #' @importFrom graphics grid
 #' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param graph Logical, if to show a graph of annual coverage.
-#'
-#' @details This function calculates the temporal coverage of stations.
-#' It returns a table with:
-#' \itemize{
-#'  \item mothly_coverage The proportion of the days with records in the month
-#'  \item annual_coverage The proportion of the days with records in the year
-#'  \item annual_coverage The proportion of the years with records in the reference period
-#' }
-#' Important: 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1', 
-#' but rather that all years have at least one record.
 #'
 #' @return A table with coverage.
 #' @examples

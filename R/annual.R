@@ -1,16 +1,27 @@
-#' @title Calculate Annual Summaries
+#' @title Calculate Annual Timseries
+#'
+#' @description
+#' `annual()` aggregates the daily timeseries into an annual one.
+#' Aggregation is done differently for TMIN, TMAX, and PRCP.
+#'
+#' @details
+#' Aggregation is done as:
+#' \describe{
+#'  \item{TMAX}{Maximum temperature recorded in the year} 
+#'  \item{TMIN}{Minimum temperature recorded in the year}
+#'  \item{PRCP}{Total (cumulative) precipitation amount in the year}
+#' }
 #'
 #' @importFrom dplyr select mutate across distinct_all summarize group_by left_join
 #' @importFrom tidyselect contains everything all_of
 #' @importFrom tidyr drop_na
 #' @importFrom tibble tibble as_tibble
 #' @importFrom rlang .data
-#'
 #' @export
 #'
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
-#'
 #' @return A tibble with the annual timeseries at the stations.
+#'
 #' @examples
 #' annual(CA003076680)
 annual <- function(x) {

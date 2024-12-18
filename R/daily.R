@@ -36,7 +36,7 @@
   }
 
   if (length(station_id) > 1) station_id <- paste(station_id, collapse = ",")
-  req <- paste0(
+  url <- paste0(
     "https://www.ncei.noaa.gov/access/services/data/v1?",
     "dataset=daily-summaries&",
     "stations=", station_id, "&",
@@ -47,7 +47,7 @@
     "includeAttributes=true&",
     "format=json"
   )
-  return(req)
+  return(url)
 }
 
 #' @title Request Daily Summaries

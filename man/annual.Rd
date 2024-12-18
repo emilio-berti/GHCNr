@@ -2,7 +2,7 @@
 % Please edit documentation in R/annual.R
 \name{annual}
 \alias{annual}
-\title{Calculate Annual Summaries}
+\title{Calculate Annual Timseries}
 \usage{
 annual(x)
 }
@@ -13,7 +13,16 @@ annual(x)
 A tibble with the annual timeseries at the stations.
 }
 \description{
-Calculate Annual Summaries
+\code{annual()} aggregates the daily timeseries into an annual one.
+Aggregation is done differently for TMIN, TMAX, and PRCP.
+}
+\details{
+Aggregation is done as:
+\describe{
+\item{TMAX}{Maximum temperature recorded in the year}
+\item{TMIN}{Minimum temperature recorded in the year}
+\item{PRCP}{Total (cumulative) precipitation amount in the year}
+}
 }
 \examples{
 annual(CA003076680)
