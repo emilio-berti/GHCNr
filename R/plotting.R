@@ -1,118 +1,99 @@
 #' @title Plot GHCN Timeseries
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
+#' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis lines par
+#' @importFrom stats interaction.plot
 #' @export
 #' @return NULL, called for side effects.
 #' @examples
 #' plot(CA003076680, "tmax")
 plot.ghcn_daily <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_daily"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+  }
+  stopifnot(variable %in% colnames(x))
+  
+  args <- list(...)
 
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
   } else {
-    palette <- hcl.colors(n, "Roma")
+    palette <- hcl.colors(n, "Viridis")
   }
   names(palette) <- unique(x[["station"]])
-  plot(
-    x$date, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis.Date(
-    1,
-    at = seq(min(x$date), max(x$date), by = "year"),
-    format = "%Y",
-    las = 2
-  )
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$date[x$station == s], x[[variable]][x$station == s],
-      col = palette[s]
+  
+  for (variable in variables) {
+    interaction.plot(
+      x.factor = x[["date"]],
+      trace.factor = x[["station"]],
+      response = x[[variable]],
+      trace.label = "Station",
+      lty = 1,
+      col = palette,
+      xlab = "",
+      ylab = toupper(variable),
+      ...
     )
+    if (interactive() && variable != variables[length(variables)]) {
+      readline("Press any key to show the next variable")
+    }
   }
-  par(op)
 }
 
 #' @title Plot GHCN Timeseries
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
+#' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
-#' @importFrom graphics plot axis.Date axis lines par
+#' @importFrom stats interaction.plot
 #' @export
 #' @return NULL, called for side effects.
 #' @examples
 #' plot(monthly(CA003076680), "tmax")
 plot.ghcn_monthly <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_monthly"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+  }
+  stopifnot(variable %in% colnames(x))
+  
+  args <- list(...)
+  
+  x[["date"]] <- as.Date(paste(x[["year"]], x[["month"]], "01", sep = "-"))
 
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
   } else {
-    palette <- hcl.colors(n, "Roma")
+    palette <- hcl.colors(n, "Viridis")
   }
   names(palette) <- unique(x[["station"]])
-  years <- range(x[["year"]])
-  x$date <- as.Date(paste(x$year, x$month, "01", sep = "-"))
-  plot(
-    x$date, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis.Date(
-    1,
-    at = seq(min(x$date), max(x$date), by = "year"),
-    format = "%Y",
-    las = 2
-  )
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$date[x$station == s], x[[variable]][x$station == s],
-      col = palette[s],
-      lw = 2
+  
+  for (variable in variables) {
+    interaction.plot(
+      x.factor = x[["date"]],
+      trace.factor = x[["station"]],
+      response = x[[variable]],
+      trace.label = "Station",
+      lty = 1,
+      col = palette,
+      xlab = "",
+      ylab = toupper(variable),
+      ...
     )
+    if (interactive() && variable != variables[length(variables)]) {
+      readline("Press any key to show the next variable")
+    }
   }
-  par(op)
 }
 
 #' @title Plot GHCN Timeseries
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
-#' @param ... additional arguments to be passed to \code{plot()}.
+#' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
 #' @importFrom graphics plot axis.Date axis lines par
 #' @export
@@ -121,41 +102,35 @@ plot.ghcn_monthly <- function(x, variable, ...) {
 #' plot(annual(CA003076680), "tmax")
 plot.ghcn_annual <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_annual"))
-  stopifnot(variable %in% c("tmin", "tmax", "prcp"))
-  op <- par(no.readonly = TRUE)
-  par(mar = c(8, 8, 1, 1))
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+  }
+  stopifnot(variable %in% colnames(x))
+  
+  args <- list(...)
 
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
   } else {
-    palette <- hcl.colors(n, "Roma")
+    palette <- hcl.colors(n, "Viridis")
   }
   names(palette) <- unique(x[["station"]])
-  years <- range(x[["year"]])
-  plot(
-    x$year, x[[variable]],
-    xlab = "",
-    ylab = toupper(variable),
-    col = palette[x[["station"]]],
-    pch = 3,
-    type = "n",
-    frame = FALSE,
-    axes = FALSE,
-    ...
-  )
-  axis(1, at = seq(years[1], years[2], by = 1), las = 2)
-  yrange <- range(x[[variable]], na.rm = TRUE)
-  axis(
-    2,
-    at = round(seq(floor(yrange[1]), ceiling(yrange[2]), length.out = 5))
-  )
-  for (s in unique(x[["station"]])) {
-    lines(
-      x$year[x$station == s], x[[variable]][x$station == s],
-      col = palette[s],
-      lw = 3
+  
+  for (variable in variables) {
+    interaction.plot(
+      x.factor = x[["year"]],
+      trace.factor = x[["station"]],
+      response = x[[variable]],
+      trace.label = "Station",
+      lty = 1,
+      col = palette,
+      xlab = "",
+      ylab = toupper(variable),
+      ...
     )
+    if (interactive() && variable != variables[length(variables)]) {
+      readline("Press any key to show the next variable")
+    }
   }
-  par(op)
 }
