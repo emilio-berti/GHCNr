@@ -1,6 +1,7 @@
-# GHCNr v0.8.0
+# GHCNr v1.0.0
 
 ## Check
+
 R CMD check --as-cran highlights (NOTE) the URL in DESCRIPTION: <https://www.ncei.noaa.gov/access/services/data/v1>.
 The URL is correct, but the API returns a 400 error if the whole API call is not specified (i.e. including query parameters).
 
