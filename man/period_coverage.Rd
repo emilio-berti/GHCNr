@@ -10,13 +10,18 @@ period_coverage(x)
 \item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 }
 \value{
-A table with coverage across the period.
+A table with period coverage.
 }
 \description{
-Calculate Period Coverage
+\code{period_coverage()} calculates how many days have been recorded for
+the whole time period.
 }
 \details{
-Calculates the period coverage of one station.
+To calculate the coverage, a full daily time range is full joined to the
+timeseries. Missing days are set to NA. Coverage is then calculated as
+the number of values that are not NAs over the number of NAs.
+Period coverage is a constant value for each station in the \code{ghcn_daily}
+object.
 }
 \examples{
 cleaned <- remove_flagged(CA003076680)

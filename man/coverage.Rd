@@ -15,18 +15,16 @@ coverage(x, graph = FALSE)
 A table with coverage.
 }
 \description{
-Calculate Coverage of Daily Summaries
+\code{coverage()} calculates the temporal coverage of the time series.
+See also \code{\link[=monthly_coverage]{monthly_coverage()}}, \code{\link[=annual_coverage]{annual_coverage()}}, and \code{\link[=period_coverage]{period_coverage()}}.
 }
 \details{
-This function calculates the temporal coverage of stations.
-It returns a table with:
+Returns a table with:
 \itemize{
 \item mothly_coverage The proportion of the days with records in the month
 \item annual_coverage The proportion of the days with records in the year
 \item annual_coverage The proportion of the years with records in the reference period
 }
-Important: 'annual_coverage = 1' does not mean that all years have 'annual_coverage = 1',
-but rather that all years have at least one record.
 }
 \examples{
 cleaned <- remove_flagged(CA003076680)

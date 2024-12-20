@@ -10,13 +10,16 @@ monthly_coverage(x)
 \item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
 }
 \value{
-A table with mothly coverages.
+A table with mothly coverage.
 }
 \description{
-Calculate Monthly Coverage
+\code{monthly_coverage()} calculates how many days have been recorded for
+each month in the time period.
 }
 \details{
-Calculates the monthly coverage of one station.
+To calculate the coverage, a full daily time range is full joined to the
+timeseries. Missing days are set to NA. Coverage is then calculated as
+the number of values that are not NAs over the number of NAs.
 }
 \examples{
 cleaned <- remove_flagged(CA003076680)

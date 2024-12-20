@@ -52,9 +52,12 @@
 
 #' @title Request Daily Summaries
 #' @importFrom httr2 request req_user_agent req_perform resp_body_json last_response resp_status
+#' @importFrom curl has_internet
 #' @param url Character, URL of the request.
 #' @return Body of the JSON request.
 .daily_request <- function(url) {
+  if (!has_internet()) stop("You do not have access to the internet. Check you connection and try again.")
+
   req <- url |>
     request() |>
     req_user_agent("GHCNr (https://cran.r-project.org/package=GHCNr)")
@@ -82,7 +85,7 @@
 
 #' @title Download Daily Summaries
 #'
-#' @importFrom dplyr bind_rows mutate rename_with across group_by tally select
+#' @importFrom dplyr bind_rows mutate rename_with across group_by tally select arrange
 #' @importFrom tidyselect matches contains everything any_of
 #' @importFrom rlang .data
 #'
@@ -135,7 +138,8 @@ daily <- function(
 
   ans <- daily_data |> 
     select("date", "station", any_of(tolower(variables)), contains("flag")) |>
-    mutate(across(any_of(tolower(variables)), ~as.numeric(.x)))
+    mutate(across(any_of(tolower(variables)), ~as.numeric(.x))) |>
+    arrange(.data$date)
 
   ans <- .s3_daily(ans)
 

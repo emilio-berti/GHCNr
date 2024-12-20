@@ -2,6 +2,7 @@
 #'
 #' @importFrom httr2 request req_user_agent req_perform resp_body_json last_response resp_status
 #' @importFrom terra vect
+#' @importFrom curl has_internet
 #'
 #' @export
 #'
@@ -19,6 +20,7 @@ get_country <- function(
   country_code,
   simplified = TRUE
 ) {
+  if (!has_internet()) stop("You do not have access to the internet. Check you connection and try again.")
   stopifnot(nchar(country_code) == 3)
   if (length(country_code) > 1) {
     stop("Too many country codes. Use country_codes() for multiple countries.")

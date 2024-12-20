@@ -13,10 +13,13 @@ annual_coverage(x)
 A table with annual coverage.
 }
 \description{
-Calculate Annual Coverage
+\code{annual_coverage()} calculates how many days have been recorded for
+each year in the time period.
 }
 \details{
-Calculates the annual coverage of one station.
+To calculate the coverage, a full daily time range is full joined to the
+timeseries. Missing days are set to NA. Coverage is then calculated as
+the number of values that are not NAs over the number of NAs.
 }
 \examples{
 cleaned <- remove_flagged(CA003076680)

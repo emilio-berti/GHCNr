@@ -8,6 +8,7 @@
 #'
 #' @importFrom readr read_table
 #' @importFrom dplyr filter
+#' @importFrom curl has_internet
 #'
 #' @export
 #'
@@ -35,6 +36,7 @@ stations <- function(
   last_year
 ) {
   if (missing(filename)) {
+    if (!has_internet()) stop("You do not have access to the internet. Check you connection and try again.")
     src <- .inventory_url()
   } else{
     src <- filename
