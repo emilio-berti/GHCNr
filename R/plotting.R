@@ -10,13 +10,8 @@
 #' plot(CA003076680, "tmax")
 plot.ghcn_daily <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_daily"))
-  if (missing(variable)) {
-    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
-  }
-  stopifnot(variable %in% colnames(x))
   
   args <- list(...)
-
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
@@ -25,7 +20,27 @@ plot.ghcn_daily <- function(x, variable, ...) {
   }
   names(palette) <- unique(x[["station"]])
   
-  for (variable in variables) {
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+    stopifnot(length(variables) > 0)
+    for (v in variables) {
+      interaction.plot(
+        x.factor = x[["date"]],
+        trace.factor = x[["station"]],
+        response = x[[v]],
+        trace.label = "Station",
+        lty = 1,
+        col = palette,
+        xlab = "",
+        ylab = toupper(v),
+        ...
+      )
+      if (interactive() && v != variables[length(variables)]) {
+        readline("Press any key to show the next variable")
+      }
+    }
+  } else {
+    stopifnot(variable %in% colnames(x))
     interaction.plot(
       x.factor = x[["date"]],
       trace.factor = x[["station"]],
@@ -37,9 +52,6 @@ plot.ghcn_daily <- function(x, variable, ...) {
       ylab = toupper(variable),
       ...
     )
-    if (interactive() && variable != variables[length(variables)]) {
-      readline("Press any key to show the next variable")
-    }
   }
 }
 
@@ -55,15 +67,9 @@ plot.ghcn_daily <- function(x, variable, ...) {
 #' plot(monthly(CA003076680), "tmax")
 plot.ghcn_monthly <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_monthly"))
-  if (missing(variable)) {
-    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
-  }
-  stopifnot(variable %in% colnames(x))
   
   args <- list(...)
-  
   x[["date"]] <- as.Date(paste(x[["year"]], x[["month"]], "01", sep = "-"))
-
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
@@ -71,8 +77,28 @@ plot.ghcn_monthly <- function(x, variable, ...) {
     palette <- hcl.colors(n, "Viridis")
   }
   names(palette) <- unique(x[["station"]])
-  
-  for (variable in variables) {
+
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+    stopifnot(length(variables) > 0)
+    for (v in variables) {
+      interaction.plot(
+        x.factor = x[["date"]],
+        trace.factor = x[["station"]],
+        response = x[[v]],
+        trace.label = "Station",
+        lty = 1,
+        col = palette,
+        xlab = "",
+        ylab = toupper(v),
+        ...
+      )
+      if (interactive() && variable != variables[length(variables)]) {
+        readline("Press any key to show the next variable")
+      }
+    }
+  } else {
+    stopifnot(variable %in% colnames(x))
     interaction.plot(
       x.factor = x[["date"]],
       trace.factor = x[["station"]],
@@ -84,9 +110,6 @@ plot.ghcn_monthly <- function(x, variable, ...) {
       ylab = toupper(variable),
       ...
     )
-    if (interactive() && variable != variables[length(variables)]) {
-      readline("Press any key to show the next variable")
-    }
   }
 }
 
@@ -102,13 +125,8 @@ plot.ghcn_monthly <- function(x, variable, ...) {
 #' plot(annual(CA003076680), "tmax")
 plot.ghcn_annual <- function(x, variable, ...) {
   stopifnot(inherits(x, "ghcn_annual"))
-  if (missing(variable)) {
-    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
-  }
-  stopifnot(variable %in% colnames(x))
   
   args <- list(...)
-
   n <- length(unique(x[["station"]]))
   if (n == 1) {
     palette <- "grey20"
@@ -116,8 +134,28 @@ plot.ghcn_annual <- function(x, variable, ...) {
     palette <- hcl.colors(n, "Viridis")
   }
   names(palette) <- unique(x[["station"]])
-  
-  for (variable in variables) {
+
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+    stopifnot(length(variables) > 0)    
+    for (v in variables) {
+      interaction.plot(
+        x.factor = x[["year"]],
+        trace.factor = x[["station"]],
+        response = x[[v]],
+        trace.label = "Station",
+        lty = 1,
+        col = palette,
+        xlab = "",
+        ylab = toupper(v),
+        ...
+      )
+      if (interactive() && v != variables[length(variables)]) {
+        readline("Press any key to show the next variable")
+      }
+    }
+  } else {
+    stopifnot(variable %in% colnames(x))
     interaction.plot(
       x.factor = x[["year"]],
       trace.factor = x[["station"]],
@@ -129,8 +167,5 @@ plot.ghcn_annual <- function(x, variable, ...) {
       ylab = toupper(variable),
       ...
     )
-    if (interactive() && variable != variables[length(variables)]) {
-      readline("Press any key to show the next variable")
-    }
   }
 }

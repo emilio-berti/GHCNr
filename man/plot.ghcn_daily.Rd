@@ -11,7 +11,7 @@
 
 \item{variable}{Name of the variable to plot.}
 
-\item{...}{additional arguments to be passed to \code{plot()}.}
+\item{...}{additional arguments to be passed to \code{\link[stats:interaction.plot]{stats::interaction.plot()}}.}
 }
 \value{
 NULL, called for side effects.
