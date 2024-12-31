@@ -17,22 +17,22 @@
   variables
 ) {
   if (nchar(strsplit(start_date, "-")[[1]][1]) < 4) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(start_date, "-")[[1]][2]) > 12) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(start_date, "-")[[1]][3]) > 31) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
   if (nchar(strsplit(end_date, "-")[[1]][1]) < 4) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(end_date, "-")[[1]][2]) > 12) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
   if (as.numeric(strsplit(end_date, "-")[[1]][3]) > 31) {
-    warning("Date format should be YYYY-MM-DD")
+    stop("Date format should be YYYY-MM-DD")
   }
 
   if (length(station_id) > 1) station_id <- paste(station_id, collapse = ",")
