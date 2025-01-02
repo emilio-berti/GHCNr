@@ -85,8 +85,8 @@
 
 #' @title Download Daily Summaries
 #'
-#' @importFrom dplyr bind_rows mutate rename_with across group_by tally select arrange
-#' @importFrom tidyselect matches contains everything any_of
+#' @importFrom dplyr bind_rows mutate rename_with across group_by select arrange
+#' @importFrom tidyselect contains any_of
 #' @importFrom rlang .data
 #'
 #' @export

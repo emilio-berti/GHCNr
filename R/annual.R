@@ -12,10 +12,8 @@
 #'  \item{PRCP}{Total (cumulative) precipitation amount in the year}
 #' }
 #'
-#' @importFrom dplyr select mutate across distinct_all summarize group_by left_join
-#' @importFrom tidyselect contains everything all_of
-#' @importFrom tidyr drop_na
-#' @importFrom tibble tibble as_tibble
+#' @importFrom dplyr select mutate across distinct_all summarize group_by
+#' @importFrom tidyselect all_of
 #' @importFrom rlang .data
 #' @export
 #'

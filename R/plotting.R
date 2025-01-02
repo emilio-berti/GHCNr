@@ -169,3 +169,58 @@ plot.ghcn_annual <- function(x, variable, ...) {
     )
   }
 }
+
+#' @title Plot GHCN Timeseries
+#' @param x Object of class `ghcn_daily`. See [daily()] for details.
+#' @param cutoff Numeric, the year used as cutoff for baseline.
+#' @param ... additional arguments to be passed to [stats::interaction.plot()].
+#' @importFrom grDevices hcl.colors
+#' @importFrom stats interaction.plot loess
+#' @importFrom graphics abline
+#' @export
+#' @return NULL, called for side effects.
+#' @examples
+#' plot(CA003076680, "tmax")
+plot.ghcn_anomaly <- function(x, cutoff, ...) {
+  stopifnot(inherits(x, "ghcn_anomaly"))
+
+  variables <- intersect(c("tmax", "tmin"), colnames(x))
+  stopifnot(length(variables) > 0)
+  if (length(variables) == 2) {
+    op <- par(no.readonly = TRUE)
+    par(mfrow = c(2, 1))
+  }
+
+  if ("tmax" %in% variables) {
+    plot(
+      x[["year"]], x[["tmax"]],
+      pch = 21, bg = "tomato", cex = 2,
+      xlab = "", ylab = "Anomaly TMAX"
+    )
+    l <- loess(tmax ~ year, data = x, ...)
+    lines(
+      sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],
+      col = "tomato", lw = 2
+    )
+    abline(h = 0, lty = 2)
+    if (!missing(cutoff)) abline(v = cutoff, lty = 2)
+  }
+
+  if ("tmin" %in% variables) {
+    plot(
+      x[["year"]], x[["tmin"]],
+      pch = 21, bg = "dodgerblue", cex = 2,
+      xlab = "", ylab = "Anomaly TMIN"
+    )
+    l <- loess(tmin ~ year, data = x, ...)
+    lines(
+      sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],
+      col = "dodgerblue", lw = 2
+    )
+    abline(h = 0, lty = 2)
+    if (!missing(cutoff)) abline(v = cutoff, lty = 2)
+  }
+
+  if (length(variables) == 2) par(mfrow = c(2, 1))
+
+}

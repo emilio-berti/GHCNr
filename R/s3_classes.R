@@ -7,7 +7,6 @@
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")
   }
-  # Add class attribute
   structure(data, class = c("ghcn_daily", class(data)))
 }
 
@@ -48,7 +47,6 @@ as_daily <- function(data) {
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")
   }
-  # Add class attribute
   structure(data, class = c("ghcn_monthly", class(data)))
 }
 
@@ -61,6 +59,29 @@ as_daily <- function(data) {
   if (!inherits(data, "tbl_df")) {
     stop("`data` must be a tibble or data frame")
   }
-  # Add class attribute
   structure(data, class = c("ghcn_annual", class(data)))
+}
+
+#' @title Annual Quarter Constructor
+#' @export
+#' @param data A data frame or tibble to be used as the underlying data.
+#' @return An object of class `ghcn_quarterly`.
+#' @details Creates a new object of class `ghcn_quarterly`.
+.s3_quarterly <- function(data = tibble::tibble()) {
+  if (!inherits(data, "tbl_df")) {
+    stop("`data` must be a tibble or data frame")
+  }
+  structure(data, class = c("ghcn_quarterly", class(data)))
+}
+
+#' @title Anomaly Constructor
+#' @export
+#' @param data A data frame or tibble to be used as the underlying data.
+#' @return An object of class `ghcn_anomaly`.
+#' @details Creates a new object of class `ghcn_anomaly`.
+.s3_anomaly <- function(data = tibble::tibble()) {
+  if (!inherits(data, "tbl_df")) {
+    stop("`data` must be a tibble or data frame")
+  }
+  structure(data, class = c("ghcn_anomaly", class(data)))
 }
