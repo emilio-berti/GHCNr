@@ -18,7 +18,7 @@
 #'
 #' @param x Object of class `ghcn_daily` or `ghcn_annual`. See [daily()] and [annual()] for details.
 #' @param cutoff Numeric, last year of the baseline period (inclusive).
-#' @param aggregate_statons Logical, if anomaly should be calculated aggregating data from all weather stations.
+#' @param aggregate_stations Logical, if anomaly should be calculated aggregating data from all weather stations.
 #' @return A tibble with the anomaly timeseries at the stations.
 #'
 #' @examples

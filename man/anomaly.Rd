@@ -11,7 +11,7 @@ anomaly(x, cutoff, aggregate_stations = FALSE)
 
 \item{cutoff}{Numeric, last year of the baseline period (inclusive).}
 
-\item{aggregate_statons}{Logical, if anomaly should be calculated aggregating data from all weather stations.}
+\item{aggregate_stations}{Logical, if anomaly should be calculated aggregating data from all weather stations.}
 }
 \value{
 A tibble with the anomaly timeseries at the stations.
