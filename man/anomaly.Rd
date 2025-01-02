@@ -4,12 +4,14 @@
 \alias{anomaly}
 \title{Temperature Anomaly}
 \usage{
-anomaly(x, cutoff)
+anomaly(x, cutoff, aggregate_stations = FALSE)
 }
 \arguments{
 \item{x}{Object of class \code{ghcn_daily} or \code{ghcn_annual}. See \code{\link[=daily]{daily()}} and \code{\link[=annual]{annual()}} for details.}
 
 \item{cutoff}{Numeric, last year of the baseline period (inclusive).}
+
+\item{aggregate_statons}{Logical, if anomaly should be calculated aggregating data from all weather stations.}
 }
 \value{
 A tibble with the anomaly timeseries at the stations.
@@ -18,6 +20,8 @@ A tibble with the anomaly timeseries at the stations.
 \code{anomaly()} calculates the temperature anomalies compared to a baseline
 reference period. Anomalies are the difference between annual temperature
 extremes and the average across the baseline period.
+
+If \code{aggregate_stations = TRUE}, anomalies are averaged across all weather stations.
 }
 \details{
 \code{cutoff} must be a character with the date, e.g. "2000-01-01".

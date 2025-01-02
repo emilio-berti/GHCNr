@@ -4,18 +4,21 @@
 #' `anomaly()` calculates the temperature anomalies compared to a baseline
 #' reference period. Anomalies are the difference between annual temperature
 #' extremes and the average across the baseline period.
+#' 
+#' If `aggregate_stations = TRUE`, anomalies are averaged across all weather stations.
 #'
 #' @details
 #' `cutoff` must be a character with the date, e.g. "2000-01-01".
 #'
 #' @importFrom dplyr filter select mutate summarize group_by left_join
-#' @importFrom tidyselect all_of
+#' @importFrom tidyselect all_of matches
 #' @importFrom rlang .data
 #' @importFrom tibble as_tibble
 #' @export
 #'
 #' @param x Object of class `ghcn_daily` or `ghcn_annual`. See [daily()] and [annual()] for details.
 #' @param cutoff Numeric, last year of the baseline period (inclusive).
+#' @param aggregate_statons Logical, if anomaly should be calculated aggregating data from all weather stations.
 #' @return A tibble with the anomaly timeseries at the stations.
 #'
 #' @examples
@@ -29,7 +32,7 @@
 #' a <- annual(x)
 #' anom <- anomaly(a, cutoff = 2012)
 #' plot(anom)
-anomaly <- function(x, cutoff) {
+anomaly <- function(x, cutoff, aggregate_stations = FALSE) {
   stopifnot(inherits(x, c("ghcn_annual", "ghcn_daily")))
   if (inherits(x, "ghcn_daily")) {
     .check_flags(x)
@@ -55,15 +58,22 @@ anomaly <- function(x, cutoff) {
     mutate(
       tmin = .data$tmin - .data$baseline_tmin,
       tmax = .data$tmax - .data$baseline_tmax
-    )
-
-  ans <- ans |> 
-    group_by(.data$year) |> 
-    summarize(
-      tmin = mean(.data$tmin, na.rm = TRUE),
-      tmax = mean(.data$tmax, na.rm = TRUE)
     ) |> 
     .s3_anomaly()
+
+  if (any(grepl("prcp", colnames(ans)))) {
+    ans <- ans |> select(-matches("prcp"))
+  }
+
+  if (aggregate_stations) {
+    ans <- ans |>
+      group_by(.data$year) |>
+      summarize(
+        tmin = mean(.data$tmin),
+        tmax = mean(.data$tmax),
+        .groups = "drop"
+      )
+  }
 
   return(ans)
 
