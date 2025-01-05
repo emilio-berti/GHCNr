@@ -44,7 +44,7 @@ stations <- function(
   ans <- tryCatch(
     read_table(
       src,
-      col_names = c("station", "latitude", "longitude", "variable", "startYear", "endYear"),
+      col_names = c("station", "latitude", "longitude", "variable", "firstYear", "lastYear"),
       show_col_types = FALSE
     ) |> 
       filter(.data$variable %in% toupper(variables)),
@@ -53,10 +53,10 @@ stations <- function(
   if (is.null(ans)) stop(.inventory_url(), " not found.")
 
   if (!missing(first_year)) {
-    ans <- ans |>filter(.data$startYear <= first_year)
+    ans <- ans |>filter(.data$firstYear <= first_year)
   }
   if (!missing(last_year)) {
-    ans <- ans |>filter(.data$endYear >= last_year)
+    ans <- ans |>filter(.data$lastYear >= last_year)
   }
 
   return(ans)
