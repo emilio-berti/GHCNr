@@ -37,14 +37,3 @@
 #' }
 #' @source <https://www.countrycallingcodes.com/iso-country-codes/europe-codes.php>
 "USC00010655"
-
-#' Elevation of the GHCNd Stations
-#'
-#' @format ## `europe_codes`
-#' A table 128,024 x 2:
-#' \describe{
-#'   \item{station}{Station name}
-#'   \item{elevation}{Elevation in meters}
-#' }
-#' @source <https://www.ncei.noaa.gov/pub/data/ghcn/daily/ghcnd-stations.csv>
-"stations_elevation"
