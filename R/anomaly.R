@@ -75,6 +75,8 @@ anomaly <- function(x, cutoff, aggregate_stations = FALSE) {
       )
   }
 
+  ans <- ans |> select(-all_of(missing_variable))
+
   return(ans)
 
 }
