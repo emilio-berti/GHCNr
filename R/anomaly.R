@@ -61,21 +61,25 @@ anomaly <- function(x, cutoff, aggregate_stations = FALSE) {
     ) |> 
     .s3_anomaly()
 
-  if (any(grepl("prcp", colnames(ans)))) {
-    ans <- ans |> select(-matches("prcp"))
-  }
-
   if (aggregate_stations) {
     ans <- ans |>
       group_by(.data$year) |>
       summarize(
-        tmin = mean(.data$tmin),
-        tmax = mean(.data$tmax),
+        tmin = mean(.data$tmin, na.rm = TRUE),
+        tmax = mean(.data$tmax, na.rm = TRUE),
         .groups = "drop"
       )
   }
 
-  ans <- ans |> select(-all_of(missing_variable))
+  if ("prcp" %in% colnames(ans)) {
+    ans <- ans |> select(-matches("prcp"))
+  }
+  if ("tmin" %in% missing_variable) {
+    ans <- ans |> select(-matches("tmin"))
+  }
+  if ("tmax" %in% missing_variable) {
+    ans <- ans |> select(-matches("tmax"))
+  }
 
   return(ans)
 
