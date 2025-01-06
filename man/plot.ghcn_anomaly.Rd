@@ -20,5 +20,5 @@ NULL, called for side effects.
 Plot GHCN Timeseries
 }
 \examples{
-plot(CA003076680, "tmax")
+plot(anomaly(remove_flagged(CA003076680), 2015))
 }

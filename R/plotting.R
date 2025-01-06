@@ -180,7 +180,7 @@ plot.ghcn_annual <- function(x, variable, ...) {
 #' @export
 #' @return NULL, called for side effects.
 #' @examples
-#' plot(CA003076680, "tmax")
+#' plot(anomaly(remove_flagged(CA003076680), 2015))
 plot.ghcn_anomaly <- function(x, cutoff, ...) {
   stopifnot(inherits(x, "ghcn_anomaly"))
 
@@ -197,6 +197,7 @@ plot.ghcn_anomaly <- function(x, cutoff, ...) {
       pch = 21, bg = "tomato", cex = 2,
       xlab = "", ylab = "Anomaly TMAX"
     )
+    lines(x[["year"]], x[["tmax"]], col = "tomato")
     l <- loess(tmax ~ year, data = x, ...)
     lines(
       sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],
@@ -212,6 +213,7 @@ plot.ghcn_anomaly <- function(x, cutoff, ...) {
       pch = 21, bg = "dodgerblue", cex = 2,
       xlab = "", ylab = "Anomaly TMIN"
     )
+    lines(x[["year"]], x[["tmax"]], col = "dodgerblue")
     l <- loess(tmin ~ year, data = x, ...)
     lines(
       sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],

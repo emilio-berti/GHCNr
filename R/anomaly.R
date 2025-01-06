@@ -68,7 +68,8 @@ anomaly <- function(x, cutoff, aggregate_stations = FALSE) {
         tmin = mean(.data$tmin, na.rm = TRUE),
         tmax = mean(.data$tmax, na.rm = TRUE),
         .groups = "drop"
-      )
+      ) |>
+      .s3_anomaly()
   }
 
   if ("prcp" %in% colnames(ans)) {
