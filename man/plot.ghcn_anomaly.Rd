@@ -4,12 +4,10 @@
 \alias{plot.ghcn_anomaly}
 \title{Plot GHCN Timeseries}
 \usage{
-\method{plot}{ghcn_anomaly}(x, cutoff, ...)
+\method{plot}{ghcn_anomaly}(x, ...)
 }
 \arguments{
 \item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
-
-\item{cutoff}{Numeric, the year used as cutoff for baseline.}
 
 \item{...}{additional arguments to be passed to \code{\link[stats:interaction.plot]{stats::interaction.plot()}}.}
 }

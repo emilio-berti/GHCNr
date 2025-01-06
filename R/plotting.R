@@ -172,7 +172,6 @@ plot.ghcn_annual <- function(x, variable, ...) {
 
 #' @title Plot GHCN Timeseries
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
-#' @param cutoff Numeric, the year used as cutoff for baseline.
 #' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
 #' @importFrom stats interaction.plot loess
@@ -181,8 +180,11 @@ plot.ghcn_annual <- function(x, variable, ...) {
 #' @return NULL, called for side effects.
 #' @examples
 #' plot(anomaly(remove_flagged(CA003076680), 2015))
-plot.ghcn_anomaly <- function(x, cutoff, ...) {
+plot.ghcn_anomaly <- function(x, ...) {
   stopifnot(inherits(x, "ghcn_anomaly"))
+  if (length(unique(x[["station"]])) > 1) {
+    stop("Cannot plot anomaly for multiple stations when not aggregated. See ?anomaly() for details.")
+  }
 
   variables <- intersect(c("tmax", "tmin"), colnames(x))
   stopifnot(length(variables) > 0)
@@ -192,37 +194,23 @@ plot.ghcn_anomaly <- function(x, cutoff, ...) {
   }
 
   if ("tmax" %in% variables) {
-    plot(
-      x[["year"]], x[["tmax"]],
-      pch = 21, bg = "tomato", cex = 2,
-      xlab = "", ylab = "Anomaly TMAX"
+    barplot(
+      x[["tmax"]],
+      col = ifelse(x[["tmax"]] <= 0, "dodgerblue", "tomato"),
+      xlab = "", ylab = "Anomaly TMAX",
+      names.arg = x[["year"]]
     )
-    lines(x[["year"]], x[["tmax"]], col = "tomato")
-    l <- loess(tmax ~ year, data = x, ...)
-    lines(
-      sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],
-      col = "tomato", lw = 2
-    )
-    abline(h = 0, lty = 2)
-    if (!missing(cutoff)) abline(v = cutoff, lty = 2)
   }
 
   if ("tmin" %in% variables) {
-    plot(
-      x[["year"]], x[["tmin"]],
-      pch = 21, bg = "dodgerblue", cex = 2,
-      xlab = "", ylab = "Anomaly TMIN"
+    barplot(
+      x[["tmin"]],
+      col = ifelse(x[["tmin"]] <= 0, "dodgerblue", "tomato"),
+      xlab = "", ylab = "Anomaly TMIN",
+      names.arg = x[["year"]]
     )
-    lines(x[["year"]], x[["tmax"]], col = "dodgerblue")
-    l <- loess(tmin ~ year, data = x, ...)
-    lines(
-      sort(l[["x"]]), l[["fitted"]][order(l[["x"]])],
-      col = "dodgerblue", lw = 2
-    )
-    abline(h = 0, lty = 2)
-    if (!missing(cutoff)) abline(v = cutoff, lty = 2)
   }
 
-  if (length(variables) == 2) par(mfrow = c(2, 1))
+  if (length(variables) == 2) par(op)
 
 }
