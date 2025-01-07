@@ -2,12 +2,12 @@
 % Please edit documentation in R/plotting.R
 \name{plot.ghcn_monthly}
 \alias{plot.ghcn_monthly}
-\title{Plot GHCN Timeseries}
+\title{Plot GHCNd Timeseries}
 \usage{
 \method{plot}{ghcn_monthly}(x, variable, ...)
 }
 \arguments{
-\item{x}{Object of class \code{ghcn_daily}. See \code{\link[=daily]{daily()}} for details.}
+\item{x}{Object of class \code{ghcn_monthly}. See \code{\link[=monthly]{monthly()}} for details.}
 
 \item{variable}{Name of the variable to plot.}
 
@@ -17,7 +17,7 @@
 NULL, called for side effects.
 }
 \description{
-Plot GHCN Timeseries
+Plot GHCNd Timeseries
 }
 \examples{
 plot(monthly(CA003076680), "tmax")

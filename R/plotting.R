@@ -1,4 +1,4 @@
-#' @title Plot GHCN Timeseries
+#' @title Plot GHCNd Timeseries
 #' @param x Object of class `ghcn_daily`. See [daily()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to [stats::interaction.plot()].
@@ -55,8 +55,8 @@ plot.ghcn_daily <- function(x, variable, ...) {
   }
 }
 
-#' @title Plot GHCN Timeseries
-#' @param x Object of class `ghcn_daily`. See [daily()] for details.
+#' @title Plot GHCNd Timeseries
+#' @param x Object of class `ghcn_monthly`. See [monthly()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
@@ -93,7 +93,7 @@ plot.ghcn_monthly <- function(x, variable, ...) {
         ylab = toupper(v),
         ...
       )
-      if (interactive() && variable != variables[length(variables)]) {
+      if (interactive() && v != variables[length(variables)]) {
         readline("Press any key to show the next variable")
       }
     }
@@ -113,8 +113,66 @@ plot.ghcn_monthly <- function(x, variable, ...) {
   }
 }
 
-#' @title Plot GHCN Timeseries
-#' @param x Object of class `ghcn_daily`. See [daily()] for details.
+#' @title Plot GHCNd Timeseries
+#' @param x Object of class `ghcn_quarterly`. See [daily()] for details.
+#' @param variable Name of the variable to plot.
+#' @param ... additional arguments to be passed to [stats::interaction.plot()].
+#' @importFrom grDevices hcl.colors
+#' @importFrom stats interaction.plot
+#' @export
+#' @return NULL, called for side effects.
+#' @examples
+#' plot(monthly(CA003076680), "tmax")
+plot.ghcn_quarterly <- function(x, variable, ...) {
+  stopifnot(inherits(x, "ghcn_quarterly"))
+  
+  args <- list(...)
+  x[["date"]] <- as.Date(paste(x[["year"]], x[["quarter"]], "01", sep = "-"))
+  n <- length(unique(x[["station"]]))
+  if (n == 1) {
+    palette <- "grey20"
+  } else {
+    palette <- hcl.colors(n, "Viridis")
+  }
+  names(palette) <- unique(x[["station"]])
+
+  if (missing(variable)) {
+    variables <- intersect(c("tmax", "tmin", "prcp"), colnames(x))
+    stopifnot(length(variables) > 0)
+    for (v in variables) {
+      interaction.plot(
+        x.factor = x[["date"]],
+        trace.factor = x[["station"]],
+        response = x[[v]],
+        trace.label = "Station",
+        lty = 1,
+        col = palette,
+        xlab = "",
+        ylab = toupper(v),
+        ...
+      )
+      if (interactive() && v != variables[length(variables)]) {
+        readline("Press any key to show the next variable")
+      }
+    }
+  } else {
+    stopifnot(variable %in% colnames(x))
+    interaction.plot(
+      x.factor = x[["date"]],
+      trace.factor = x[["station"]],
+      response = x[[variable]],
+      trace.label = "Station",
+      lty = 1,
+      col = palette,
+      xlab = "",
+      ylab = toupper(variable),
+      ...
+    )
+  }
+}
+
+#' @title Plot GHCNd Timeseries
+#' @param x Object of class `ghcn_annual`. See [annual()] for details.
 #' @param variable Name of the variable to plot.
 #' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors

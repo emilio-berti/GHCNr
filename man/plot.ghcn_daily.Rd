@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotting.R
 \name{plot.ghcn_daily}
 \alias{plot.ghcn_daily}
-\title{Plot GHCN Timeseries}
+\title{Plot GHCNd Timeseries}
 \usage{
 \method{plot}{ghcn_daily}(x, variable, ...)
 }
@@ -17,7 +17,7 @@
 NULL, called for side effects.
 }
 \description{
-Plot GHCN Timeseries
+Plot GHCNd Timeseries
 }
 \examples{
 plot(CA003076680, "tmax")
