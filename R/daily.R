@@ -116,7 +116,7 @@ daily <- function(
   stopifnot(is.character(variables))
 
   url <- .daily_url(
-    station_id,
+    unique(station_id),
     start_date,
     end_date,
     variables
