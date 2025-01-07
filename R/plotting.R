@@ -233,7 +233,7 @@ plot.ghcn_annual <- function(x, variable, ...) {
 #' @param ... additional arguments to be passed to [stats::interaction.plot()].
 #' @importFrom grDevices hcl.colors
 #' @importFrom stats interaction.plot loess
-#' @importFrom graphics abline
+#' @importFrom graphics barplot
 #' @export
 #' @return NULL, called for side effects.
 #' @examples
