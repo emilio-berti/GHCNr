@@ -1,5 +1,5 @@
 Package: GHCNr
-Title: Download Weather Station Data from GHCN
+Title: Download Weather Station Data from GHCNd
 Version: 1.3.5
 Authors@R: 
     person("Emilio", "Berti", , "emilio.berti@idiv.de", role = c("aut", "cre"),
