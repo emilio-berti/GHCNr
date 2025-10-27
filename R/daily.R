@@ -111,7 +111,7 @@ daily <- function(
   station_id,
   start_date,
   end_date,
-  variables = c("tmax", "tmin", "prcp")
+  variables = c("tavg", "tmax", "tmin", "prcp")
 ) {
   stopifnot(is.character(variables))
 

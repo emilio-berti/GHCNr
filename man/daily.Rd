@@ -4,7 +4,12 @@
 \alias{daily}
 \title{Download Daily Summaries}
 \usage{
-daily(station_id, start_date, end_date, variables = c("tmax", "tmin", "prcp"))
+daily(
+  station_id,
+  start_date,
+  end_date,
+  variables = c("tavg", "tmax", "tmin", "prcp")
+)
 }
 \arguments{
 \item{station_id}{Character, station id(s).}

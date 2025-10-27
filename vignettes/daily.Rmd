@@ -124,7 +124,10 @@ daily_ts <- daily(
 plot(daily_ts, "tmax")
 ```
 ```{r multidaily-saved, echo=FALSE}
-daily_ts <- rbind(CA003076680, USC00010655)[, c("date", "station", "tmax", "tmax_flag")]
+daily_ts <- rbind(
+  CA003076680[, c("date", "station", "tmax", "tmax_flag")],
+  USC00010655[, c("date", "station", "tmax", "tmax_flag")]
+)
 plot(daily_ts, "tmax")
 ```
 

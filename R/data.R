@@ -11,10 +11,11 @@
 #' Daily data for Station CA003076680
 #'
 #' @format ## `CA003076680`
-#' A 'ghcn-daily' object, i.e. table 7,574 x 8:
+#' A 'ghcn-daily' object, i.e. table 7,547 x 10:
 #' \describe{
 #'   \item{date}{Date of measurment}
 #'   \item{station}{Station name, i.e. 'CA003076680'}
+#'   \item{tavg}{Average temperature}
 #'   \item{tmax}{Maximum temperature}
 #'   \item{tmin}{Minimum temperature}
 #'   \item{prcp}{Total precipitation}
@@ -26,10 +27,11 @@
 #' Daily data for Station USC00010655
 #'
 #' @format ## `USC00010655`
-#' A 'ghcn-daily' object, i.e. table 7,809 x 8:
+#' A 'ghcn-daily' object, i.e. table 8,001 x 8:
 #' \describe{
 #'   \item{date}{Date of measurment}
 #'   \item{station}{Station name, i.e. 'USC00010655'}
+#'   \item{tavg}{Average temperature}
 #'   \item{tmax}{Maximum temperature}
 #'   \item{tmin}{Minimum temperature}
 #'   \item{prcp}{Total precipitation}
