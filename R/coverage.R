@@ -43,7 +43,7 @@ monthly_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp"),
+    	cols = c("tavg", "tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -57,7 +57,7 @@ monthly_coverage <- function(x) {
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("monthly", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp"))
+    	any_of(c("tavg", "tmax", "tmin", "prcp"))
   )
   return (ans)
 }
@@ -107,7 +107,7 @@ annual_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp"),
+    	cols = c("tavg", "tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -121,7 +121,7 @@ annual_coverage <- function(x) {
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("annual", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp"))
+    	any_of(c("tavg", "tmax", "tmin", "prcp"))
   )
   return (ans)
 }
@@ -173,7 +173,7 @@ period_coverage <- function(x) {
 
   ans <- x |> 
     pivot_longer(
-    	cols = c("tmax", "tmin", "prcp"),
+    	cols = c("tavg", "tmax", "tmin", "prcp"),
     	names_to = "variable",
     	values_to = "value"
     ) |> 
@@ -187,7 +187,7 @@ period_coverage <- function(x) {
     pivot_wider(names_from = "variable", values_from = "coverage") |> 
     rename_with(
     	~ paste("period", "coverage", .x, sep = "_"),
-    	any_of(c("tmax", "tmin", "prcp"))
+    	any_of(c("tavg", "tmax", "tmin", "prcp"))
   )
   return (ans)
 }

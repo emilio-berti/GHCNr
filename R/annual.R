@@ -34,6 +34,7 @@ annual <- function(x) {
     mutate(year = format(.data$date, "%Y")) |> 
     group_by(.data$station, .data$year) |>
     summarize(
+      tavg = .mean(.data$tavg),
       tmin = .min(.data$tmin),
       tmax = .max(.data$tmax),
       prcp = .sum(.data$prcp),

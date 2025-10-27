@@ -31,6 +31,7 @@ monthly <- function(x) {
     ) |> 
     group_by(.data$station, .data$year, .data$month) |>
     summarize(
+      tavg = .mean(.data$tavg),
       tmin = .min(.data$tmin),
       tmax = .max(.data$tmax),
       prcp = .sum(.data$prcp),
