@@ -41,7 +41,7 @@
   stopifnot(inherits(x, "ghcn_daily") || inherits(x, "ghcn_monthly") || inherits(x, "ghcn_annual"))
 
   # add variables to not break summarize
-  if (!all(c("tmin", "tmax", "prcp") %in% colnames(x))) {
+  if (!all(c("tavg", "tmin", "tmax", "prcp") %in% colnames(x))) {
     missing_variables <- .missing_variables(x)
     for (v in missing_variables) {
       x[[v]] <- -9999

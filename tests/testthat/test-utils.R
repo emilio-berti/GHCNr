@@ -1,6 +1,6 @@
 test_that("show missing variables", {
   x <- CA003076680
-  remove <- sample(c("tmax", "tmin", "prcp"), 1)
+  remove <- sample(c("tavg", "tmax", "tmin", "prcp"), 1)
   x <- x[, -which(colnames(x) == remove)]
   expect_identical(
     .missing_variables(x),
@@ -10,7 +10,7 @@ test_that("show missing variables", {
 
 test_that("add missing variables", {
   x <- CA003076680
-  remove <- sample(c("tmax", "tmin", "prcp"), 1)
+  remove <- sample(c("tavg", "tmax", "tmin", "prcp"), 1)
   x <- x[, -which(colnames(x) == remove)]
   x <- .add_variables(x)
   expect_identical(
