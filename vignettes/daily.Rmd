@@ -186,12 +186,6 @@ monthly_ts
 plot(monthly_ts, "tmax")
 ```
 
-```{r quarterly}
-quarterly_ts <- quarterly(daily_ts)
-quarterly_ts
-plot(quarterly_ts, "tmax")
-```
-
 ```{r annual}
 annual_ts <- annual(daily_ts)
 annual_ts

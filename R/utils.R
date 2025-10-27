@@ -28,7 +28,7 @@
 #' @return Character vector
 .missing_variables <- function(x) {
   stopifnot(inherits(x, "ghcn_daily") || inherits(x, "ghcn_monthly") || inherits(x, "ghcn_annual"))
-  ans <- setdiff(c("tmin", "tmax", "prcp"), colnames(x))
+  ans <- setdiff(c("tavg", "tmin", "tmax", "prcp"), colnames(x))
   return(ans)
 }
 
