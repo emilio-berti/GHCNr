@@ -100,6 +100,7 @@
 #' \emph{station_id} can be a vector with multiple stations.
 #' Dates should be given in `YYYY-mm-dd` format.
 #' Available \emph{variables} can be found at <https://www.ncei.noaa.gov/pub/data/ghcn/daily/readme.txt>.
+#' All units are in the metric system (Celsius and mm).
 #'
 #' @return A tibble with the daily timeseries at the stations.
 #'
